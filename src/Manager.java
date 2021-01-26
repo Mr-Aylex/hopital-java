@@ -29,4 +29,29 @@ public class Manager {
 			System.out.print(rs.getString("nom"));
 		}
 	}
+	public void loginUser() throws SQLException {
+		PreparedStatement pstm = this.getJbdc().prepareStatement("SELECT nom, mdp FROM utilisateur WHERE nom=?");
+		ResultSet rs = pstm.executeQuery();
+		if(true) {
+			
+		} else {
+			
+		}
+	}
+	public void updateUser() throws SQLException {
+		PreparedStatement pstm = this.getJbdc().prepareStatement("UPDATE SET utilisateur WHERE id=?");
+		ResultSet rs = pstm.executeQuery();
+	}
+	public void insertMedic() throws SQLException {
+		PreparedStatement pstm = this.getJbdc().prepareStatement("INSERT INTO medicaments(nom, toxicite, nb) VALUES(?,?,?)");
+		ResultSet rs = pstm.executeQuery();
+	}
+	public void updateMedic() throws SQLException {
+		PreparedStatement pstm = this.getJbdc().prepareStatement("UPDATE SET medicaments WHERE nom=?");
+		ResultSet rs = pstm.executeQuery();
+	}
+	public void deleteMedic() throws SQLException {
+		PreparedStatement pstm = this.getJbdc().prepareStatement("DELETE FROM medicaments WHERE nom=?");
+		ResultSet rs = pstm.executeQuery();
+	}
 }
