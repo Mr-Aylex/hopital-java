@@ -29,14 +29,9 @@ public class Manager {
 			System.out.print(rs.getString("nom"));
 		}
 	}
-	public void loginUser() throws SQLException {
-		PreparedStatement pstm = this.getJbdc().prepareStatement("SELECT nom, mdp FROM utilisateur WHERE nom=?");
+	public void insertUser() throws SQLException {
+		PreparedStatement pstm = this.getJbdc().prepareStatement("INSERT INTO utilisateur(nom, prenom, mail, mdp, role_user) VALUES(?,?,?,?,?)");
 		ResultSet rs = pstm.executeQuery();
-		if(true) {
-			
-		} else {
-			
-		}
 	}
 	public void updateUser() throws SQLException {
 		PreparedStatement pstm = this.getJbdc().prepareStatement("UPDATE SET utilisateur WHERE id=?");
@@ -47,11 +42,19 @@ public class Manager {
 		ResultSet rs = pstm.executeQuery();
 	}
 	public void updateMedic() throws SQLException {
-		PreparedStatement pstm = this.getJbdc().prepareStatement("UPDATE SET medicaments WHERE nom=?");
+		PreparedStatement pstm = this.getJbdc().prepareStatement("SELECT id, nom, prenom, mail, role_user FROM utilisateur WHERE id=?");
 		ResultSet rs = pstm.executeQuery();
+		while (rs.next()) {
+			rs.updateString("nom", rs.getString("nom").toUpperCase());
+			rs.updateString("prenom", rs.getString("prenom").toUpperCase());
+			rs.updateString("mail", rs.getString("mail"));
+			rs.updateString("role_user", rs.getString("role_user").toUpperCase());
+			rs.updateRow();
+		}
 	}
 	public void deleteMedic() throws SQLException {
 		PreparedStatement pstm = this.getJbdc().prepareStatement("DELETE FROM medicaments WHERE nom=?");
 		ResultSet rs = pstm.executeQuery();
+		
 	}
 }
