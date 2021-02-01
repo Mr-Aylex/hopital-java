@@ -60,7 +60,11 @@ public class Connexion {
 			public void widgetSelected(SelectionEvent e) {
 				Manager manager = new Manager();
 				try {
-					manager.loginUser(loginInput.getText(),passwdInput.getText());
+					if(manager.loginUser(loginInput.getText(),passwdInput.getText())) {
+						
+					}
+					System.out.println("c'est bon");
+					
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
