@@ -33,12 +33,15 @@ public class Manager {
 		String sql = "SELECT * FROM utilisateur";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
-		while(true) {
-			
-		}
+	    
 	}
 	public void insertUser(String nom, String prenom, String mail, String mdp, String role_user) throws SQLException {//Création d'un profil admin ou patient
 		String sql = "INSERT INTO utilisateur(nom, prenom, mail, mdp, role_user) VALUES (?,?,?,?,?)";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		ResultSet rs = pstm.executeQuery();
+	}
+	public void selectUser(String nom, String prenom, String mail, String mdp, String role_user) throws SQLException {//Création d'un profil admin ou patient
+		String sql = "SELECT * FROM utilisateur";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
 	}
@@ -47,10 +50,13 @@ public class Manager {
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
 	}
-	public void selectMedic(String nom, String toxicite, int nb) throws SQLException {//Affichage de tous les médicaments
+	public void selectMedic() throws SQLException {//Affichage de tous les médicaments
 		String sql = "SELECT * FROM medicaments";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
+		while(rs.next()) {
+			System.out.println("nom");
+		}
 	}
 	public void insertMedic(String nom, String toxicite, int nb) throws SQLException {//Ajout de médicaments
 		String sql = "INSERT INTO medicaments(nom, toxicite, nb) VALUES(?,?,?)";
