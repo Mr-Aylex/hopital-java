@@ -47,6 +47,11 @@ public class Manager {
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
 	}
+	public void selectMedic(String nom, String toxicite, int nb) throws SQLException {//Affichage de tous les médicaments
+		String sql = "SELECT * FROM medicaments";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		ResultSet rs = pstm.executeQuery();
+	}
 	public void insertMedic(String nom, String toxicite, int nb) throws SQLException {//Ajout de médicaments
 		String sql = "INSERT INTO medicaments(nom, toxicite, nb) VALUES(?,?,?)";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
@@ -67,5 +72,8 @@ public class Manager {
 		String sql = "DELETE FROM medicaments WHERE nom=?";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
+	}
+	public void exportRDV() throws SQLException {//Exportation des RDV
+		
 	}
 }
