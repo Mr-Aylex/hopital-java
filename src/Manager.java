@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Manager {
-	private String url = "jdbc:mysql://localhost/hopital?serverTimezone=UTC";
+	private String url = "jdbc:mysql://localhost/hsp?serverTimezone=UTC";
 	private String user = "root";
 	private String password = "";
 	public Connection getJbdc() {
@@ -29,21 +29,53 @@ public class Manager {
 			System.out.print(rs.getString("nom"));
 		}
 	}
-	public void loginUser() throws SQLException {//Connexion à l'interface de gestion
-		String sql = "SELECT * FROM utilisateur";
+	public boolean loginUser(String mail, String mdp) throws SQLException {//Connexion à l'interface de gestion
+		String sql = "SELECT * FROM utilisateur WHERE mail = ? AND mdp = ?";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setString(1, mail);
+		pstm.setString(2, mdp);
 		ResultSet rs = pstm.executeQuery();
-	    
+		if(rs.next() ) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	public void insertUser(String nom, String prenom, String mail, String mdp, String role_user) throws SQLException {//Création d'un profil admin ou patient
 		String sql = "INSERT INTO utilisateur(nom, prenom, mail, mdp, role_user) VALUES (?,?,?,?,?)";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
 	}
-	public void selectUser(String nom, String prenom, String mail, String mdp, String role_user) throws SQLException {//Création d'un profil admin ou patient
+	public void selectUser() throws SQLException {//Création d'un profil admin ou patient
 		String sql = "SELECT * FROM utilisateur";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
+		while(rs.next()) {
+			int id = rs.getInt("id");
+			System.out.print(rs.wasNull()?"inconnu":id);
+			System.out.print("\t\t");
+			
+			String nom = rs.getString("nom");
+			System.out.print(rs.wasNull()?"inconnu":nom);
+			System.out.print("\t\t");
+			
+			String prenom = rs.getString("prenom");
+			System.out.print(rs.wasNull()?"inconnu":prenom);
+			System.out.print("\t\t");
+			
+			String mail = rs.getString("mail");
+			System.out.print(rs.wasNull()?"inconnu":mail);
+			System.out.print("\t\t");
+			
+			String mdp = rs.getString("mdp");
+			System.out.print(rs.wasNull()?"inconnu":mdp);
+			System.out.print("\t\t");
+			
+			String role_user = rs.getString("role_user");
+			System.out.print(rs.wasNull()?"inconnu":role_user);
+			System.out.print("\t\t");
+		}
 	}
 	public void updateUser(String nom, String prenom, String mail, String mdp) throws SQLException {//Modification du profil
 		String sql = "UPDATE utilisateur SET nom='+nom+', prenom='+prenom+', mail='+mail+', mdp='+mdp' WHERE id='+id+'";
