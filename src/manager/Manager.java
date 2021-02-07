@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Manager {
-	private String url = "jdbc:mysql://localhost/hsp?serverTimezone=UTC";
+	private String url = "jdbc:mysql://localhost/hopital?serverTimezone=UTC";
 	private String user = "root";
 	private String password = "";
 	public Connection getJbdc() {
@@ -37,9 +37,11 @@ public class Manager {
 		pstm.setString(2, mdp);
 		ResultSet rs = pstm.executeQuery();
 		if(rs.next() ) {
+			System.out.println(" oui");
 			return true;
 		}
 		else {
+			System.out.println(" non");
 			return false;
 		}
 	}

@@ -22,6 +22,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.forms.widgets.SWTUtil;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Label;
 
 public class Main {
 
@@ -141,7 +142,7 @@ public class Main {
 		fd_rdvNew.left = new FormAttachment(leftComposite, 6);
 		fd_rdvNew.right = new FormAttachment(100, -10);
 		fd_rdvNew.bottom = new FormAttachment(100, -10);
-		rdvNew.setLayoutData(fd_mainComposite);
+		rdvNew.setLayoutData(fd_rdvNew);
 		formToolkit.adapt(rdvNew);
 		formToolkit.paintBordersFor(rdvNew);
 		rdvNew.setVisible(false);
@@ -163,15 +164,18 @@ public class Main {
 		fd_utilisateurUpdate.left = new FormAttachment(leftComposite, 6);
 		fd_utilisateurUpdate.right = new FormAttachment(100, -10);
 		fd_utilisateurUpdate.bottom = new FormAttachment(100, -10);
-		utilisateurUpdate.setLayoutData(fd_rdvTable);
+		utilisateurUpdate.setLayoutData(fd_utilisateurUpdate);
 		formToolkit.adapt(utilisateurUpdate);
 		formToolkit.paintBordersFor(utilisateurUpdate);
 		utilisateurUpdate.setVisible(false);
 		
 		
 
-		Button btnNewButton = new Button(leftComposite, SWT.NONE);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
+		Button medicamentBouton = new Button(leftComposite, SWT.NONE);
+		GridData gd_medicamentBouton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_medicamentBouton.widthHint = 80;
+		medicamentBouton.setLayoutData(gd_medicamentBouton);
+		medicamentBouton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				mainComposite.setVisible(false);
@@ -185,18 +189,13 @@ public class Main {
 				
 			}
 		});
-		formToolkit.adapt(btnNewButton, true, true);
-		btnNewButton.setText("New Button");
-		
-		Combo combo = new Combo(leftComposite, SWT.NONE);
-		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		formToolkit.adapt(combo);
-		formToolkit.paintBordersFor(combo);
+		formToolkit.adapt(medicamentBouton, true, true);
+		medicamentBouton.setText("M\u00E9dicament");
 		
 		
 		
-		Button btnNewButton_1 = new Button(leftComposite, SWT.NONE);
-		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
+		Button rdvBouton = new Button(leftComposite, SWT.NONE);
+		rdvBouton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				mainComposite.setVisible(false);
@@ -207,13 +206,22 @@ public class Main {
 				rdvNew.setVisible(true);
 			}
 		});
-		formToolkit.adapt(btnNewButton_1, true, true);
-		btnNewButton_1.setText("New Button");
+		formToolkit.adapt(rdvBouton, true, true);
+		rdvBouton.setText("Rendez-vous");
 		
-		Combo combo_1 = new Combo(leftComposite, SWT.NONE);
-		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		formToolkit.adapt(combo_1);
-		formToolkit.paintBordersFor(combo_1);
+		Button btnNewButton_2 = new Button(leftComposite, SWT.NONE);
+		GridData gd_btnNewButton_2 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnNewButton_2.widthHint = 80;
+		btnNewButton_2.setLayoutData(gd_btnNewButton_2);
+		formToolkit.adapt(btnNewButton_2, true, true);
+		btnNewButton_2.setText("New Button");
+		
+		Button btnNewButton_3 = new Button(leftComposite, SWT.NONE);
+		GridData gd_btnNewButton_3 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnNewButton_3.widthHint = 80;
+		btnNewButton_3.setLayoutData(gd_btnNewButton_3);
+		formToolkit.adapt(btnNewButton_3, true, true);
+		btnNewButton_3.setText("New Button");
 		
 
 	}
