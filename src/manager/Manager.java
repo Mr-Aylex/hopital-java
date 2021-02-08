@@ -4,6 +4,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Manager {
 	private String url = "jdbc:mysql://localhost/hopital?serverTimezone=UTC";
@@ -48,7 +49,7 @@ public class Manager {
 	public void insertUser(String nom, String prenom, String mail, String mdp, String role_user) throws SQLException {//Création d'un profil admin ou patient
 		String sql = "INSERT INTO utilisateur(nom, prenom, mail, mdp, role_user) VALUES (?,?,?,?,?)";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
-		ResultSet rs = pstm.executeQuery();
+		int rs = pstm.executeUpdate();
 	}
 	public void selectUser() throws SQLException {//Création d'un profil admin ou patient
 		String sql = "SELECT * FROM utilisateur";
@@ -85,18 +86,28 @@ public class Manager {
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
 	}
-	public void selectMedic() throws SQLException {//Affichage de tous les médicaments
+	public ArrayList<ArrayList> selectMedic() throws SQLException {//Affichage de tous les médicaments
 		String sql = "SELECT * FROM medicaments";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
+		ArrayList<ArrayList> liste = new ArrayList<ArrayList>();
 		while(rs.next()) {
-			System.out.println("nom");
+			ArrayList<Object> subList = new ArrayList<Object>();
+			subList.add(rs.getString("nom"));
+			subList.add(rs.getString("toxicite"));
+			subList.add(rs.getInt("nb"));
+			liste.add(subList);
 		}
+		return liste;
 	}
 	public void insertMedic(String nom, String toxicite, int nb) throws SQLException {//Ajout de médicaments
 		String sql = "INSERT INTO medicaments(nom, toxicite, nb) VALUES(?,?,?)";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
-		ResultSet rs = pstm.executeQuery();
+		pstm.setString(1, nom);
+		pstm.setString(2, toxicite);
+		pstm.setInt(3, nb);
+		
+		boolean rs = pstm.execute();
 	}
 	public void updateMedic(String nom, String toxicite, int nb) throws SQLException {//Modification des médicaments
 		String sql = "UPDATE medicaments SET nom='+nom+', toxicite='+toxicite+', nb='+nb+'";

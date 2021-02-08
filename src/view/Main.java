@@ -62,7 +62,7 @@ public class Main {
 	 */
 	protected void createContents() {
 		shell = new Shell();
-		shell.setSize(645, 468);
+		shell.setSize(819, 606);
 		shell.setText("SWT Application");
 		shell.setLayout(new FormLayout());
 		Menu menu = new Menu(shell, SWT.BAR);
@@ -105,10 +105,10 @@ public class Main {
 		
 		Composite medicamentNew = new medicamentNew(shell, SWT.NONE);
 		FormData fd_medicamentNew = new FormData();
-		fd_medicamentNew.top = new FormAttachment(leftComposite, 0, SWT.TOP);
-		fd_medicamentNew.left = new FormAttachment(leftComposite, 6);
-		fd_medicamentNew.right = new FormAttachment(100, -10);
 		fd_medicamentNew.bottom = new FormAttachment(100, -10);
+		fd_medicamentNew.top = new FormAttachment(0, 5);
+		fd_medicamentNew.right = new FormAttachment(100, -10);
+		fd_medicamentNew.left = new FormAttachment(0, 126);
 		medicamentNew.setLayoutData(fd_medicamentNew);
 		formToolkit.adapt(medicamentNew);
 		formToolkit.paintBordersFor(medicamentNew);
@@ -116,10 +116,10 @@ public class Main {
 
 		Composite mainComposite = new Composite(shell, SWT.NONE);
 		FormData fd_mainComposite = new FormData();
-		fd_mainComposite.top = new FormAttachment(leftComposite, 0, SWT.TOP);
-		fd_mainComposite.left = new FormAttachment(leftComposite, 6);
-		fd_mainComposite.right = new FormAttachment(100, -10);
 		fd_mainComposite.bottom = new FormAttachment(100, -10);
+		fd_mainComposite.top = new FormAttachment(0, 5);
+		fd_mainComposite.right = new FormAttachment(100, -10);
+		fd_mainComposite.left = new FormAttachment(0, 126);
 		mainComposite.setLayoutData(fd_mainComposite);
 		formToolkit.adapt(mainComposite);
 		formToolkit.paintBordersFor(mainComposite);
@@ -127,10 +127,10 @@ public class Main {
 		
 		Composite medicamentTable = new medicamentTable(shell, SWT.NONE);
 		FormData fd_medicamentTable = new FormData();
-		fd_medicamentTable.top = new FormAttachment(leftComposite, 0, SWT.TOP);
-		fd_medicamentTable.left = new FormAttachment(leftComposite, 6);
-		fd_medicamentTable.right = new FormAttachment(100, -10);
 		fd_medicamentTable.bottom = new FormAttachment(100, -10);
+		fd_medicamentTable.top = new FormAttachment(0, 5);
+		fd_medicamentTable.right = new FormAttachment(100, -10);
+		fd_medicamentTable.left = new FormAttachment(0, 126);
 		medicamentTable.setLayoutData(fd_medicamentTable);
 		formToolkit.adapt(medicamentTable);
 		formToolkit.paintBordersFor(medicamentTable);
@@ -138,10 +138,10 @@ public class Main {
 		
 		Composite rdvNew = new rdvNew(shell, SWT.NONE);
 		FormData fd_rdvNew = new FormData();
-		fd_rdvNew.top = new FormAttachment(leftComposite, 0, SWT.TOP);
-		fd_rdvNew.left = new FormAttachment(leftComposite, 6);
-		fd_rdvNew.right = new FormAttachment(100, -10);
 		fd_rdvNew.bottom = new FormAttachment(100, -10);
+		fd_rdvNew.top = new FormAttachment(0, 5);
+		fd_rdvNew.right = new FormAttachment(100, -10);
+		fd_rdvNew.left = new FormAttachment(0, 126);
 		rdvNew.setLayoutData(fd_rdvNew);
 		formToolkit.adapt(rdvNew);
 		formToolkit.paintBordersFor(rdvNew);
@@ -149,10 +149,10 @@ public class Main {
 		
 		Composite rdvTable = new rdvTable(shell, SWT.NONE);
 		FormData fd_rdvTable = new FormData();
-		fd_rdvTable.top = new FormAttachment(leftComposite, 0, SWT.TOP);
-		fd_rdvTable.left = new FormAttachment(leftComposite, 6);
-		fd_rdvTable.right = new FormAttachment(100, -10);
 		fd_rdvTable.bottom = new FormAttachment(100, -10);
+		fd_rdvTable.top = new FormAttachment(0, 5);
+		fd_rdvTable.right = new FormAttachment(100, -10);
+		fd_rdvTable.left = new FormAttachment(0, 126);
 		rdvTable.setLayoutData(fd_rdvTable);
 		formToolkit.adapt(rdvTable);
 		formToolkit.paintBordersFor(rdvTable);
@@ -160,10 +160,10 @@ public class Main {
 		
 		Composite utilisateurUpdate = new utilisateurUpdate(shell, SWT.NONE);
 		FormData fd_utilisateurUpdate = new FormData();
-		fd_utilisateurUpdate.top = new FormAttachment(leftComposite, 0, SWT.TOP);
-		fd_utilisateurUpdate.left = new FormAttachment(leftComposite, 6);
-		fd_utilisateurUpdate.right = new FormAttachment(100, -10);
 		fd_utilisateurUpdate.bottom = new FormAttachment(100, -10);
+		fd_utilisateurUpdate.top = new FormAttachment(0, 5);
+		fd_utilisateurUpdate.right = new FormAttachment(100, -10);
+		fd_utilisateurUpdate.left = new FormAttachment(0, 126);
 		utilisateurUpdate.setLayoutData(fd_utilisateurUpdate);
 		formToolkit.adapt(utilisateurUpdate);
 		formToolkit.paintBordersFor(utilisateurUpdate);
@@ -173,7 +173,7 @@ public class Main {
 
 		Button medicamentBouton = new Button(leftComposite, SWT.NONE);
 		GridData gd_medicamentBouton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_medicamentBouton.widthHint = 80;
+		gd_medicamentBouton.widthHint = 106;
 		medicamentBouton.setLayoutData(gd_medicamentBouton);
 		medicamentBouton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -181,9 +181,9 @@ public class Main {
 				mainComposite.setVisible(false);
 				rdvNew.setVisible(false);
 				medicamentNew.setVisible(false);
-				medicamentTable.setVisible(false);
+				medicamentTable.setVisible(true);
 				utilisateurUpdate.setVisible(false);
-				rdvTable.setVisible(true);
+				rdvTable.setVisible(false);
 				rdvNew.setVisible(false);
 				
 				
@@ -209,16 +209,27 @@ public class Main {
 		formToolkit.adapt(rdvBouton, true, true);
 		rdvBouton.setText("Rendez-vous");
 		
-		Button btnNewButton_2 = new Button(leftComposite, SWT.NONE);
-		GridData gd_btnNewButton_2 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_2.widthHint = 80;
-		btnNewButton_2.setLayoutData(gd_btnNewButton_2);
-		formToolkit.adapt(btnNewButton_2, true, true);
-		btnNewButton_2.setText("New Button");
+		Button nouveauMedic = new Button(leftComposite, SWT.NONE);
+		nouveauMedic.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				mainComposite.setVisible(false);
+				medicamentNew.setVisible(true);
+				medicamentTable.setVisible(false);
+				utilisateurUpdate.setVisible(false);
+				rdvTable.setVisible(false);
+				rdvNew.setVisible(false);
+			}
+		});
+		GridData gd_nouveauMedic = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_nouveauMedic.widthHint = 103;
+		nouveauMedic.setLayoutData(gd_nouveauMedic);
+		formToolkit.adapt(nouveauMedic, true, true);
+		nouveauMedic.setText("Nouveau m\u00E9dicament");
 		
 		Button btnNewButton_3 = new Button(leftComposite, SWT.NONE);
 		GridData gd_btnNewButton_3 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_3.widthHint = 80;
+		gd_btnNewButton_3.widthHint = 104;
 		btnNewButton_3.setLayoutData(gd_btnNewButton_3);
 		formToolkit.adapt(btnNewButton_3, true, true);
 		btnNewButton_3.setText("New Button");
