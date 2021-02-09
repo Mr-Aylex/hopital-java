@@ -101,13 +101,27 @@ public class Manager {
 		return liste;
 	}
 	public void insertMedic(String nom, String toxicite, int nb) throws SQLException {//Ajout de médicaments
-		String sql = "INSERT INTO medicaments(nom, toxicite, nb) VALUES(?,?,?)";
+		String sql = "SELECT * FROM medicaments WHERE nom = ?";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		pstm.setString(1, nom);
-		pstm.setString(2, toxicite);
-		pstm.setInt(3, nb);
-		
-		boolean rs = pstm.execute();
+		ResultSet rs = pstm.executeQuery();
+		if (rs.next()) {
+			int nombre = rs.getInt("nb");
+			
+			sql = "UPDATE medicaments SET nb = ? WHERE nom = ?";
+			pstm = this.getJbdc().prepareStatement(sql);
+			pstm.setInt(1, nombre+nb);
+			pstm.setString(2, nom);
+			pstm.execute();
+		}
+		else {
+			sql = "INSERT INTO medicaments(nom, toxicite, nb) VALUES(?,?,?)";
+			pstm = this.getJbdc().prepareStatement(sql);
+			pstm.setString(1, nom);
+			pstm.setString(2, toxicite);
+			pstm.setInt(3, nb);
+			boolean se = pstm.execute();
+		}		
 	}
 	public void updateMedic(String nom, String toxicite, int nb) throws SQLException {//Modification des médicaments
 		String sql = "UPDATE medicaments SET nom='+nom+', toxicite='+toxicite+', nb='+nb+'";

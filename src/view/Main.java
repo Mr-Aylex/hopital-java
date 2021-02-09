@@ -1,5 +1,6 @@
 package view;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +45,9 @@ public class Main {
 
 	/**
 	 * Open the window.
+	 * @throws SQLException 
 	 */
-	public void open() {
+	public void open() throws SQLException {
 		Display display = Display.getDefault();
 		createContents();
 		shell.open();
@@ -59,8 +61,9 @@ public class Main {
 
 	/**
 	 * Create contents of the window.
+	 * @throws SQLException 
 	 */
-	protected void createContents() {
+	protected void createContents() throws SQLException {
 		shell = new Shell();
 		shell.setSize(819, 606);
 		shell.setText("SWT Application");
@@ -186,7 +189,14 @@ public class Main {
 				rdvTable.setVisible(false);
 				rdvNew.setVisible(false);
 				
-				
+				shell.redraw();
+				medicamentTable.redraw();
+				mainComposite.redraw();
+				rdvNew.redraw();
+				medicamentNew.redraw();
+				utilisateurUpdate.redraw();
+				rdvTable.redraw();
+				rdvNew.redraw();
 			}
 		});
 		formToolkit.adapt(medicamentBouton, true, true);
@@ -204,6 +214,15 @@ public class Main {
 				utilisateurUpdate.setVisible(false);
 				rdvTable.setVisible(false);
 				rdvNew.setVisible(true);
+				
+				shell.redraw();
+				medicamentTable.redraw();
+				mainComposite.redraw();
+				rdvNew.redraw();
+				medicamentNew.redraw();
+				utilisateurUpdate.redraw();
+				rdvTable.redraw();
+				rdvNew.redraw();
 			}
 		});
 		formToolkit.adapt(rdvBouton, true, true);
@@ -219,6 +238,15 @@ public class Main {
 				utilisateurUpdate.setVisible(false);
 				rdvTable.setVisible(false);
 				rdvNew.setVisible(false);
+				
+				shell.redraw();
+				medicamentTable.redraw();
+				mainComposite.redraw();
+				rdvNew.redraw();
+				medicamentNew.redraw();
+				utilisateurUpdate.redraw();
+				rdvTable.redraw();
+				rdvNew.redraw();
 			}
 		});
 		GridData gd_nouveauMedic = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);

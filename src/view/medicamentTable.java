@@ -7,6 +7,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.jface.text.TextViewer;
@@ -16,6 +21,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.TableItem;
+import manager.Manager;
 
 public class medicamentTable extends Composite {
 	private Table table;
@@ -24,8 +30,9 @@ public class medicamentTable extends Composite {
 	 * Create the composite.
 	 * @param parent
 	 * @param style
+	 * @throws SQLException 
 	 */
-	public medicamentTable(Composite parent, int style) {
+	public medicamentTable(Composite parent, int style) throws SQLException {
 		super(parent, style);
 		
 		CheckboxTableViewer checkboxTableViewer = CheckboxTableViewer.newCheckList(this, SWT.BORDER | SWT.FULL_SELECTION);
@@ -48,8 +55,14 @@ public class medicamentTable extends Composite {
 		tblclmnNombre.setWidth(119);
 		tblclmnNombre.setText("Nombre");
 		
-		TableItem tableItem = new TableItem(table, SWT.NONE);
-		tableItem.setText("New TableItem");
+		Manager manager = new Manager();
+		ArrayList<ArrayList> array =  manager.selectMedic();
+		ArrayList<Object>  subArray;
+		array.forEach((a) -> {
+			TableItem tableItem = new TableItem(table, SWT.NONE);
+			tableItem.setText(new String[] {(String) a.get(0), (String) a.get(1), (String) String.valueOf(a.get(2))});
+		});
+		
 
 	}
 
