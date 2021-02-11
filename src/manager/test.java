@@ -6,7 +6,7 @@ import com.mysql.*;
 public class test {
 	public static void main(String[] args) throws SQLException {
 		Manager manager= new Manager();
-		manager.loginUser("alexandre@hotmail.fr", "1234");
+		manager.exportRDV();
 	}
 
 }

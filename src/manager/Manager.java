@@ -1,10 +1,12 @@
 package manager;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Manager {
 	private String url = "jdbc:mysql://localhost/hopital?serverTimezone=UTC";
@@ -124,7 +126,7 @@ public class Manager {
 		}		
 	}
 	public void updateMedic(String nom, String toxicite, int nb) throws SQLException {//Modification des médicaments
-		String sql = "UPDATE medicaments SET nom='+nom+', toxicite='+toxicite+', nb='+nb+'";
+		String sql = "UPDATE medicaments SET nom='?', toxicite='?', nb='?'";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
 		while (rs.next()) {
@@ -135,11 +137,67 @@ public class Manager {
 		}
 	}
 	public void deleteMedic() throws SQLException {//Suppression des médicaments
-		String sql = "DELETE FROM medicaments WHERE nom=?";
+		String sql = "SELECT * FROM medicaments WHERE nom = ?";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
+		while(rs.next()) {
+			rs.getString("nom");
+			rs.getString("toxicite");
+			rs.getInt("nb");
+			rs.deleteRow();
+		}
 	}
-	public void exportRDV() throws SQLException {//Exportation des RDV
+	public ArrayList<ArrayList> exportRDV() throws SQLException {//Exportation des RDV
+		//Délimiteurs qui doivent être dans le fichier CSV
+		  final String DELIMITER = ",";
+		  final String SEPARATOR = "\n";   
+		 //En-tête de fichier
+		  final String HEADER = "Nom,Motif,Specialites,Heure,Date";
+		    
+		String sql = "utilisateur.nom, motif.nom_motif,specialites.nom_spe, heure.nom_heure, date_rdv FROM rdv INNER JOIN medecin ON id_medecin = medecin.id"
+				+ "   INNER JOIN utilisateur ON medecin.id_user = utilisateur.id INNER JOIN heure ON heure_id = heure.id INNER JOIN specialites ON specialites.id = medecin.id_specialite\r\n"
+				+ "   INNER JOIN motif ON motif.id = rdv.id_motif";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		ResultSet rs = pstm.executeQuery();
+		ArrayList<ArrayList> rdvList = new ArrayList<ArrayList>();
+		while(rs.next()) {
+			ArrayList<Object> liste = new ArrayList<Object>();
+			liste.add("utilisateur.nom");
+			liste.add("motif.nom_motif");
+			liste.add("specialites.nom_spe");
+			liste.add("heure.nom");
+			liste.add("date_rdv");
+			rdvList.add(liste);
+		}
+		return rdvList;
 		
+		FileWriter file = null;
+		
+		try {
+			file = new FileWriter("Rdv.csv");
+	        //Ajouter l'en-tête
+	        file.append(HEADER);
+	        //Ajouter une nouvelle ligne après l'en-tête
+	        file.append(SEPARATOR);
+	        SQLException liste;
+			//Itérer bookList
+	        Iterator it = liste.iterator();
+	        while(it.hasNext())
+	        {
+	          rdvList b = (rdvList)it.next();
+	          file.append(b.getNom());
+	          file.append(DELIMITER);
+	          file.append(b.getMotif());
+	          file.append(DELIMITER);
+	          file.append(b.getSpecialites());
+	          file.append(DELIMITER);
+	          
+	          file.append(SEPARATOR);
+	        }
+	        file.close();
+		} 
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
