@@ -16,8 +16,8 @@ public class Manager {
 		
 		try {
 			Connection cnx = DriverManager.getConnection(this.url,this.user,this.password);
-			System.out.print("Etat de la connexion");
-			System.out.print(cnx.isClosed()?"fermée":"ouverte");
+			System.out.print("Etat de la connexion :");
+			System.out.print(cnx.isClosed()?"fermée":"ouverte \r\n");
 			return cnx;
 			
 		} catch (SQLException e) {
@@ -53,40 +53,44 @@ public class Manager {
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		int rs = pstm.executeUpdate();
 	}
-	public void selectUser() throws SQLException {//Création d'un profil admin ou patient
+	public void selectUser() throws SQLException {//Affichage des utilisateurs
 		String sql = "SELECT * FROM utilisateur";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
 		while(rs.next()) {
-			int id = rs.getInt("id");
-			System.out.print(rs.wasNull()?"inconnu":id);
-			System.out.print("\t\t");
+			ArrayList<Object> users = new ArrayList<Object>();
+			users.add(rs.getString("nom"));
+			users.add(rs.getString("prenom"));
+			users.add(rs.getString("mail"));
+			users.add(rs.getString("mdp"));
+			users.add(rs.getString("role_user"));
 			
-			String nom = rs.getString("nom");
-			System.out.print(rs.wasNull()?"inconnu":nom);
-			System.out.print("\t\t");
-			
-			String prenom = rs.getString("prenom");
-			System.out.print(rs.wasNull()?"inconnu":prenom);
-			System.out.print("\t\t");
-			
-			String mail = rs.getString("mail");
-			System.out.print(rs.wasNull()?"inconnu":mail);
-			System.out.print("\t\t");
-			
-			String mdp = rs.getString("mdp");
-			System.out.print(rs.wasNull()?"inconnu":mdp);
-			System.out.print("\t\t");
-			
-			String role_user = rs.getString("role_user");
-			System.out.print(rs.wasNull()?"inconnu":role_user);
-			System.out.print("\t\t");
+			for(int i = 0; i < users.size(); i++) {
+				System.out.println(users.get(i));
+			}
 		}
 	}
 	public void updateUser(String nom, String prenom, String mail, String mdp) throws SQLException {//Modification du profil
-		String sql = "UPDATE utilisateur SET nom='+nom+', prenom='+prenom+', mail='+mail+', mdp='+mdp' WHERE id='+id+'";
+		String sql = "SELECT * FROM utilisateur WHERE nom = ?";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setString(1, nom);
 		ResultSet rs = pstm.executeQuery();
+		while(rs.next()) {
+			sql = "UPDATE utilisateur SET nom='?', prenom='?', mail='?', mdp='?'";
+			pstm = this.getJbdc().prepareStatement(sql);
+			pstm.setString(1, nom);
+			pstm.setString(2, prenom);
+			pstm.setString(3, mail);
+			pstm.setString(4, mdp);
+			
+			int rowsUpdated = pstm.executeUpdate();
+			if(rowsUpdated > 0) {
+				System.out.println("Le profil a été modifié");
+			}
+			else {
+				System.out.println("Veuillez réessayer");
+			}
+		}
 	}
 	public ArrayList<ArrayList> selectMedic() throws SQLException {//Affichage de tous les médicaments
 		String sql = "SELECT * FROM medicaments";
@@ -136,17 +140,42 @@ public class Manager {
 			rs.updateRow();
 		}
 	}
-	public void deleteMedic() throws SQLException {//Suppression des médicaments
-		String sql = "SELECT * FROM medicaments WHERE nom = ?";
+	public void deleteMedic(String nom, String toxicite, int nb) throws SQLException {//Suppression des médicaments
+		String sql = "DELETE FROM medicaments WHERE nom = ?";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setString(1, nom);
+		
+		int rowsDeleted = pstm.executeUpdate();
+		if(rowsDeleted > 0) {
+			System.out.println("Produit supprimé");
+			}
+		else {
+			System.out.println("Erreur dans la suppression");
+		}
+	}
+	
+	public void selectMedecin() throws SQLException {//Afficher médecin
+		String sql = "SELECT nom, prenom, mail, specialites.nom_spe as specialites, medecin.telephone, medecin.lieu FROM utilisateur \r\n"
+				+ "INNER JOIN medecin ON utilisateur.id = medecin.id_user \r\n"
+				+ "INNER JOIN specialites ON medecin.id_specialite = specialites.id \r\n"
+				+ "WHERE role_user = 'medecin'";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
 		while(rs.next()) {
-			rs.getString("nom");
-			rs.getString("toxicite");
-			rs.getInt("nb");
-			rs.deleteRow();
+			ArrayList<Object> ficheInfo = new ArrayList<Object>();
+			ficheInfo.add(rs.getString("nom"));
+			ficheInfo.add(rs.getString("prenom"));
+			ficheInfo.add(rs.getString("mail"));
+			ficheInfo.add(rs.getString("specialites"));
+			ficheInfo.add(rs.getString("telephone"));
+			ficheInfo.add(rs.getString("lieu"));
+			
+			for(int i = 0; i < ficheInfo.size(); i++) {
+				System.out.println(ficheInfo.get(i));
+			}
 		}
 	}
+    /*
 	public ArrayList<ArrayList> exportRDV() throws SQLException {//Exportation des RDV
 		//Délimiteurs qui doivent être dans le fichier CSV
 		  final String DELIMITER = ",";
@@ -154,22 +183,24 @@ public class Manager {
 		 //En-tête de fichier
 		  final String HEADER = "Nom,Motif,Specialites,Heure,Date";
 		    
-		String sql = "utilisateur.nom, motif.nom_motif,specialites.nom_spe, heure.nom_heure, date_rdv FROM rdv INNER JOIN medecin ON id_medecin = medecin.id"
-				+ "   INNER JOIN utilisateur ON medecin.id_user = utilisateur.id INNER JOIN heure ON heure_id = heure.id INNER JOIN specialites ON specialites.id = medecin.id_specialite\r\n"
-				+ "   INNER JOIN motif ON motif.id = rdv.id_motif";
+		String sql = "SELECT utilisateur.nom as nom, motif.nom_motif as motif,specialites.nom_spe as specialites, heure.nom_heure as heure, date_rdv FROM rdv \r\n"
+				+ "INNER JOIN medecin ON id_medecin = medecin.id \r\n"
+				+ "INNER JOIN utilisateur ON medecin.id_user = utilisateur.id INNER JOIN heure ON heure_id = heure.id INNER JOIN specialites ON specialites.id = medecin.id_specialite \r\n"
+				+ "INNER JOIN motif ON motif.id = rdv.id_motif";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
-		ArrayList<ArrayList> rdvList = new ArrayList<ArrayList>();
 		while(rs.next()) {
-			ArrayList<Object> liste = new ArrayList<Object>();
-			liste.add("utilisateur.nom");
-			liste.add("motif.nom_motif");
-			liste.add("specialites.nom_spe");
-			liste.add("heure.nom");
-			liste.add("date_rdv");
-			rdvList.add(liste);
+			ArrayList<Object> rdvList = new ArrayList<Object>();
+			rdvList.add("nom");
+			rdvList.add("motif");
+			rdvList.add("specialites");
+			rdvList.add("heure");
+			rdvList.add("date_rdv");
+			
+			for(int i = 0; i < rdvList.size(); i++) {
+				System.out.println(rdvList.get(i));
+			}
 		}
-		return rdvList;
 		
 		FileWriter file = null;
 		
@@ -191,6 +222,9 @@ public class Manager {
 	          file.append(DELIMITER);
 	          file.append(b.getSpecialites());
 	          file.append(DELIMITER);
+	          file.append(b.getHeure());
+	          file.append(DELIMITER);
+	          file.append(b.getDate());
 	          
 	          file.append(SEPARATOR);
 	        }
@@ -200,4 +234,5 @@ public class Manager {
 			e.printStackTrace();
 		}
 	}
+	*/
 }
