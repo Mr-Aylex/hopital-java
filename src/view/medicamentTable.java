@@ -1,73 +1,66 @@
 package view;
-
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.function.Consumer;
-
-import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.jface.text.TextViewer;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.widgets.TableItem;
 import manager.Manager;
 
-public class medicamentTable extends Composite {
-	private Table table;
+import java.io.Console;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import java.awt.Button;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+
+public class MedicamentTable extends JPanel {
+	private JTable table;
 
 	/**
-	 * Create the composite.
-	 * @param parent
-	 * @param style
+	 * Create the panel.
 	 * @throws SQLException 
 	 */
-	public medicamentTable(Composite parent, int style) throws SQLException {
-		super(parent, style);
+	public MedicamentTable() throws SQLException {
+		setBackground(Color.ORANGE);
+		setLayout(null);
+		table = new JTable();
+		makeTable(table);
+		add(table);
 		
-		CheckboxTableViewer checkboxTableViewer = CheckboxTableViewer.newCheckList(this, SWT.BORDER | SWT.FULL_SELECTION);
-		table = checkboxTableViewer.getTable();
-		table.setHeaderVisible(true);
-		table.setBounds(116, 107, 400, 233);
-		
-		TableViewerColumn tableViewerColumn = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
-		TableColumn tblclmnNom = tableViewerColumn.getColumn();
-		tblclmnNom.setWidth(152);
-		tblclmnNom.setText("Nom");
-		
-		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
-		TableColumn tblclmnToxicit = tableViewerColumn_1.getColumn();
-		tblclmnToxicit.setWidth(113);
-		tblclmnToxicit.setText("Toxicit\u00E9");
-		
-		TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
-		TableColumn tblclmnNombre = tableViewerColumn_2.getColumn();
-		tblclmnNombre.setWidth(119);
-		tblclmnNombre.setText("Nombre");
-		
-		Manager manager = new Manager();
-		ArrayList<ArrayList> array =  manager.selectMedic();
-		ArrayList<Object>  subArray;
-		array.forEach((a) -> {
-			TableItem tableItem = new TableItem(table, SWT.NONE);
-			tableItem.setText(new String[] {(String) a.get(0), (String) a.get(1), (String) String.valueOf(a.get(2))});
+		Button refreshBtn = new Button("Refresh");
+		refreshBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				table.removeAll();
+				try {
+					makeTable(table);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		});
-		
+		refreshBtn.setBounds(73, 61, 67, 21);
+		add(refreshBtn);
 
 	}
-
-	@Override
-	protected void checkSubclass() {
-		// Disable the check that prevents subclassing of SWT components
+	public void makeTable(JTable table) throws SQLException {
+		DefaultTableModel dtm = new DefaultTableModel(0, 0);
+		
+		Manager manager = new Manager();
+		ArrayList<ArrayList> array  = manager.selectMedic();
+		
+		String header[] = new String[] { "Nom", "Toxicité", "Nombre" };
+		
+		dtm.setColumnIdentifiers(header);
+		array.forEach((a) -> {
+			dtm.addRow(new String[] {(String) a.get(0), (String) a.get(1), (String) String.valueOf(a.get(2))});
+		});
+		
+		
+		table.setBounds(44, 103, 430, 249);
+		table.setModel(dtm);
+		
 	}
 }

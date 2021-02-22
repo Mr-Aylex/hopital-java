@@ -1,85 +1,54 @@
 package view;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
+import javax.swing.JPanel;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.JButton;
+import java.awt.Color;
 
-import java.sql.SQLException;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import manager.Manager;
-
-public class medicamentNew extends Composite {
-	private Text nomInput;
+public class MedicamentNew extends JPanel {
+	private JTextField textField;
 
 	/**
-	 * Create the composite.
-	 * @param parent
-	 * @param style
+	 * Create the panel.
 	 */
-	public medicamentNew(Composite parent, int style) {
-		super(parent, style);
+	public MedicamentNew() {
+		setBackground(Color.GRAY);
+		setLayout(null);
 		
-		nomInput = new Text(this, SWT.BORDER);
-		nomInput.setBounds(73, 94, 129, 31);
+		JLabel lblNewLabel = new JLabel("New label");
+		lblNewLabel.setBounds(54, 51, 49, 14);
+		add(lblNewLabel);
 		
-		Label lblNom = new Label(this, SWT.NONE);
-		lblNom.setBounds(73, 62, 81, 25);
-		lblNom.setText("Nom");
+		textField = new JTextField();
+		textField.setBounds(45, 95, 96, 20);
+		add(textField);
+		textField.setColumns(10);
 		
-		Combo toxiciteCombo = new Combo(this, SWT.NONE);
-		toxiciteCombo.setItems(new String[] {"L\u00E9g\u00E8re", "Mod\u00E9r\u00E9", "Intense"});
-		toxiciteCombo.setBounds(263, 94, 104, 33);
+		JLabel lblNewLabel_1 = new JLabel("New label");
+		lblNewLabel_1.setBounds(197, 51, 49, 14);
+		add(lblNewLabel_1);
 		
-		Label lblToxicit = new Label(this, SWT.NONE);
-		lblToxicit.setBounds(267, 62, 81, 25);
-		lblToxicit.setText("Toxicit\u00E9");
+		JComboBox comboBox = new JComboBox();
+		comboBox.setBounds(211, 94, 30, 22);
+		add(comboBox);
 		
-		Spinner nombreSpinner = new Spinner(this, SWT.BORDER);
-		nombreSpinner.setBounds(73, 178, 72, 31);
+		JLabel lblNewLabel_2 = new JLabel("New label");
+		lblNewLabel_2.setBounds(54, 165, 49, 14);
+		add(lblNewLabel_2);
 		
-		Label lblNombreDunit = new Label(this, SWT.NONE);
-		lblNombreDunit.setBounds(73, 147, 129, 25);
-		lblNombreDunit.setText("Nombre d'unit\u00E9");
+		JComboBox comboBox_1 = new JComboBox();
+		comboBox_1.setBounds(54, 200, 30, 22);
+		add(comboBox_1);
 		
-		Button btnValider = new Button(this, SWT.NONE);
-		btnValider.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				System.out.println(nomInput.getText());
-				System.out.println(toxiciteCombo.getText());
-				System.out.println(Integer.parseInt(nombreSpinner.getText()));
-				
-				if (toxiciteCombo.getText() != "Choissicé la toxicité" && nomInput.getText() != "" && Integer.parseInt(nombreSpinner.getText()) >= 1) {
-					System.out.println("valider");
-					Manager manager = new Manager();
-					try {
-						manager.insertMedic(nomInput.getText(),toxiciteCombo.getText(), Integer.parseInt(nombreSpinner.getText()));
-					} catch (NumberFormatException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}
-				else {
-					System.out.println("Non");
-				}
-			}
-		});
-		btnValider.setBounds(183, 226, 105, 35);
-		btnValider.setText("Valider");
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.setBounds(179, 200, 89, 23);
+		add(btnNewButton);
 
-	}
-
-	@Override
-	protected void checkSubclass() {
-		// Disable the check that prevents subclassing of SWT components
 	}
 }
