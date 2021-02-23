@@ -14,6 +14,7 @@ import java.awt.Color;
 import javax.swing.JSpinner;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
 public class MedicamentNew extends JPanel {
@@ -48,19 +49,29 @@ public class MedicamentNew extends JPanel {
 		lblNewLabel_2.setBounds(54, 126, 49, 14);
 		add(lblNewLabel_2);
 		
+
+		JSpinner nombreSpinner = new JSpinner();
+		nombreSpinner.setBounds(64, 151, 30, 20);
+		add(nombreSpinner);
+		
 		JButton btnNewButton = new JButton("Valider");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Manager manager = new Manager();
-				//manager.insertMedic(nomChamp.getText(), toxiciteCombo.getSelectedItem().toString(), );
+				try {
+					manager.insertMedic(nomChamp.getText(), toxiciteCombo.getSelectedItem().toString(), Integer.parseInt(nombreSpinner.getValue().toString()));
+				} catch (NumberFormatException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnNewButton.setBounds(197, 147, 89, 23);
 		add(btnNewButton);
 		
-		JSpinner nombreSpinner = new JSpinner();
-		nombreSpinner.setBounds(64, 151, 30, 20);
-		add(nombreSpinner);
 
 	}
 }
