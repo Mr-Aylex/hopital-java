@@ -45,5 +45,8 @@ public class Medicaments {
 		this.nb = nb;
 	}
 	
-
+	@Override
+    public String toString() {
+        return "Medicaments [nom="+nom+", toxicite="+toxicite+", nb="+nb+"]";
+    }
 }

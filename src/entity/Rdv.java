@@ -56,5 +56,8 @@ public class Rdv {
 		this.heure_id = heure_id;
 	}
 	
-	
+	@Override
+    public String toString() {
+        return "Rdv [id="+id+", id_patient="+id_patient+", id_medecin="+id_medecin+", id_motif="+id_motif+", date_rdv="+date_rdv+", heure_id="+heure_id+"]";
+    }
 }

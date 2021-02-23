@@ -6,7 +6,7 @@ import com.mysql.*;
 public class test {
 	public static void main(String[] args) throws SQLException {
 		Manager manager= new Manager();
-		manager.deleteMedic("test", "test", 25);
+		manager.exportMedic();
 	}
 
 }

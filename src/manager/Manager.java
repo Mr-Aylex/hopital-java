@@ -1,5 +1,6 @@
 package manager;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,10 +9,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import entity.Medicaments;
+import entity.Rdv;
+
 public class Manager {
 	private String url = "jdbc:mysql://localhost/hopital?serverTimezone=UTC";
 	private String user = "root";
 	private String password = "";
+	//Délimiteurs qui doivent être dans le fichier CSV
+	private static final String DELIMITER = ",";
+	private static final String SEPARATOR = "\n";   
+	//En-tête de fichier Medicaments.csv
+	private static final String HEADER = "Nom, Toxicite, Nombre";
+	//En-tête de fichier Rdv.csv
+	private static final String HEADER1 = "Id, IdPatient, IdMedecin, IdMotif, DateRdv, HeureId";
+	private ArrayList<Object> medicamentList;
 	public Connection getJbdc() {
 		
 		try {
@@ -175,58 +187,45 @@ public class Manager {
 			}
 		}
 	}
-    /*
-	public ArrayList<ArrayList> exportRDV() throws SQLException {//Exportation des RDV
-		//Délimiteurs qui doivent être dans le fichier CSV
-		  final String DELIMITER = ",";
-		  final String SEPARATOR = "\n";   
-		 //En-tête de fichier
-		  final String HEADER = "Nom,Motif,Specialites,Heure,Date";
-		    
-		String sql = "SELECT utilisateur.nom as nom, motif.nom_motif as motif,specialites.nom_spe as specialites, heure.nom_heure as heure, date_rdv FROM rdv \r\n"
-				+ "INNER JOIN medecin ON id_medecin = medecin.id \r\n"
-				+ "INNER JOIN utilisateur ON medecin.id_user = utilisateur.id INNER JOIN heure ON heure_id = heure.id INNER JOIN specialites ON specialites.id = medecin.id_specialite \r\n"
-				+ "INNER JOIN motif ON motif.id = rdv.id_motif";
+	
+	public void exportMedic() throws SQLException {//Exportation des produits		
+		//Création de ton tableau des médicaments de type arrayList
+		ArrayList<Medicaments> tabMedicaments = new ArrayList<Medicaments>();
+		String sql = "SELECT * FROM medicaments";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
-		ResultSet rs = pstm.executeQuery();
+		ResultSet rs = pstm.executeQuery(); 
 		while(rs.next()) {
-			ArrayList<Object> rdvList = new ArrayList<Object>();
-			rdvList.add("nom");
-			rdvList.add("motif");
-			rdvList.add("specialites");
-			rdvList.add("heure");
-			rdvList.add("date_rdv");
+			// new medicament
+			Medicaments m = new Medicaments(rs.getInt("id"), rs.getString("nom"), rs.getString("toxicite"), rs.getInt("nb"));
+			tabMedicaments.add(m);
+			/*this.medicamentList = new ArrayList<Object>();
+			medicamentList.add(rs.getString("nom"));
+			medicamentList.add(rs.getString("toxicite"));
+			medicamentList.add(rs.getInt("nb"));
+			// array add medicament
+			tabMedicaments.add(medicamentList);*/
 			
-			for(int i = 0; i < rdvList.size(); i++) {
-				System.out.println(rdvList.get(i));
-			}
+			/*for(int i = 0; i < medicamentList.size(); i++) {
+				System.out.println(medicamentList.get(i));
+			}*/
 		}
 		
 		FileWriter file = null;
 		
 		try {
-			file = new FileWriter("Rdv.csv");
+			file = new FileWriter("Medicaments.csv");
 	        //Ajouter l'en-tête
 	        file.append(HEADER);
 	        //Ajouter une nouvelle ligne après l'en-tête
 	        file.append(SEPARATOR);
-	        SQLException liste;
-			//Itérer bookList
-	        Iterator it = liste.iterator();
-	        while(it.hasNext())
-	        {
-	          rdvList b = (rdvList)it.next();
-	          file.append(b.getNom());
-	          file.append(DELIMITER);
-	          file.append(b.getMotif());
-	          file.append(DELIMITER);
-	          file.append(b.getSpecialites());
-	          file.append(DELIMITER);
-	          file.append(b.getHeure());
-	          file.append(DELIMITER);
-	          file.append(b.getDate());
-	          
-	          file.append(SEPARATOR);
+			
+	        for(Medicaments m : tabMedicaments) {
+	        	  file.append(m.getNom());
+		          file.append(DELIMITER);
+		          file.append(m.getTocixite());
+		          file.append(DELIMITER);
+		          file.append(String.valueOf(m.getNb()));
+		          file.append(SEPARATOR);
 	        }
 	        file.close();
 		} 
@@ -234,5 +233,43 @@ public class Manager {
 			e.printStackTrace();
 		}
 	}
-	*/
+	
+	public void exportRdv() throws SQLException {
+		ArrayList<Rdv> tabRdv = new ArrayList<Rdv>();
+		String sql = "SELECT * FROM rdv";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		ResultSet rs = pstm.executeQuery();
+		while(rs.next()) {
+			Rdv r = new Rdv(rs.getInt("id"), rs.getInt("id_patient"), rs.getInt("id_medecin"), rs.getInt("id_motif"), rs.getDate("date_rdv"), rs.getInt("heure_id"));
+			tabRdv.add(r);
+		}
+		
+		FileWriter file = null;
+		
+		try {
+			file = new FileWriter("Rdv.csv");
+			file.append(HEADER1);
+			file.append(SEPARATOR);
+			
+			for(Rdv r : tabRdv) {
+				file.append(String.valueOf(r.getId()));
+				file.append(DELIMITER);
+				file.append(String.valueOf(r.getId_patient()));
+				file.append(DELIMITER);
+				file.append(String.valueOf(r.getId_medecin()));
+				file.append(DELIMITER);
+				file.append(String.valueOf(r.getId_motif()));
+				file.append(DELIMITER);
+				file.append(String.valueOf(r.getDate_rdv()));
+				file.append(DELIMITER);
+				file.append(String.valueOf(r.getHeure_id()));
+				file.append(SEPARATOR);
+			}
+			file.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
