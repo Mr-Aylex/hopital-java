@@ -2,6 +2,7 @@ package manager;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +24,9 @@ public class Manager {
 	private static final String HEADER = "Nom, Toxicite, Nombre";
 	//En-tête de fichier Rdv.csv
 	private static final String HEADER1 = "Id, IdPatient, IdMedecin, IdMotif, DateRdv, HeureId";
+	/*
 	private ArrayList<Object> medicamentList;
+	*/
 	public Connection getJbdc() {
 		
 		try {
@@ -63,7 +66,21 @@ public class Manager {
 	public void insertUser(String nom, String prenom, String mail, String mdp, String role_user) throws SQLException {//Création d'un profil admin ou patient
 		String sql = "INSERT INTO utilisateur(nom, prenom, mail, mdp, role_user) VALUES (?,?,?,?,?)";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setString(1, nom);
+		pstm.setString(2, prenom);
+		pstm.setString(3, mail);
+		pstm.setString(4, mdp);
+		pstm.setString(5, role_user);
+		
 		int rs = pstm.executeUpdate();
+		try {
+			if(rs > 0) {
+				System.out.println("L\'utilisateur a bien été ajouté");
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	public void selectUser() throws SQLException {//Affichage des utilisateurs
 		String sql = "SELECT * FROM utilisateur";
@@ -266,6 +283,67 @@ public class Manager {
 				file.append(SEPARATOR);
 			}
 			file.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public ArrayList<ArrayList> selectDisponibilite() throws SQLException {//Visibilité des médecins disponibles
+		ArrayList<ArrayList> tabMedecins = new ArrayList<ArrayList>();
+		String sql = "SELECT nom, prenom, mail, specialites.nom_spe as specialites, medecin.lieu as lieu FROM utilisateur r\n\""
+				+ "INNER JOIN medecin ON utilisateur.id = medecin.id_user \r\n"
+				+ "INNER JOIN specialites ON medecin.id_specialite = specialites.id \r\n"
+				+ "WHERE role_user='medecin'";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		ResultSet rs = pstm.executeQuery();
+		while(rs.next()) {
+			ArrayList<Object> liste = new ArrayList<Object>();
+			liste.add(rs.getString("nom"));
+			liste.add(rs.getString("prenom"));
+			liste.add(rs.getString("specialites"));
+			liste.add(rs.getString("lieu"));
+			tabMedecins.add(liste);
+		}
+		return tabMedecins;
+	}
+	
+	public void insertDossier(int id_patient, String adresse_post, String mutuelle, String num_ss, String opt, String regime) throws SQLException {//Saisir les informations du patient
+		String sql = "INSERT INTO dossier_patients(id_patient, adresse_post, mutuelle, num_ss, opt, regime) VALUES(?,?,?,?,?,?)";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setInt(1, id_patient);
+		pstm.setString(2, adresse_post);
+		pstm.setString(3, mutuelle);
+		pstm.setString(4, num_ss);
+		pstm.setString(5, opt);
+		pstm.setString(6, regime);
+		
+		int rs = pstm.executeUpdate();
+		try {
+			if(rs > 0) {
+				System.out.println("Dossier du patient ajouté");
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void ajoutRdv(int id_patient, int id_medecin, int id_motif, Date date_rdv, int heure_id) throws SQLException {//Service de prise de RDV
+		String sql = "INSERT INTO rdv(id_patient, id_medecin, id_motif, date_rdv, heure_id) VALUES(?,?,?,?,?)";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setInt(1, id_patient);
+		pstm.setInt(2, id_medecin);
+		pstm.setInt(3, id_motif);
+		pstm.setDate(4, date_rdv);
+		pstm.setInt(5, heure_id);
+		
+		int rs = pstm.executeUpdate();
+		
+		try {
+			if(rs > 0) {
+				System.out.println("Rendez-vous ajouté");
+			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
