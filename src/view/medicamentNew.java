@@ -1,5 +1,6 @@
 package view;
 
+import manager.Manager;
 import javax.swing.JPanel;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -10,9 +11,13 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.Color;
+import javax.swing.JSpinner;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MedicamentNew extends JPanel {
-	private JTextField textField;
+	private JTextField nomChamp;
 
 	/**
 	 * Create the panel.
@@ -21,34 +26,41 @@ public class MedicamentNew extends JPanel {
 		setBackground(Color.GRAY);
 		setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("New label");
-		lblNewLabel.setBounds(54, 51, 49, 14);
-		add(lblNewLabel);
+		JLabel nomLabel = new JLabel("Nom");
+		nomLabel.setBounds(54, 70, 49, 14);
+		add(nomLabel);
 		
-		textField = new JTextField();
-		textField.setBounds(45, 95, 96, 20);
-		add(textField);
-		textField.setColumns(10);
+		nomChamp = new JTextField();
+		nomChamp.setBounds(45, 95, 96, 20);
+		add(nomChamp);
+		nomChamp.setColumns(10);
 		
-		JLabel lblNewLabel_1 = new JLabel("New label");
-		lblNewLabel_1.setBounds(197, 51, 49, 14);
-		add(lblNewLabel_1);
+		JLabel toxiciteLabel = new JLabel("Toxicit\u00E9");
+		toxiciteLabel.setBounds(201, 70, 49, 14);
+		add(toxiciteLabel);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(211, 94, 30, 22);
-		add(comboBox);
+		JComboBox toxiciteCombo = new JComboBox();
+		toxiciteCombo.setModel(new DefaultComboBoxModel(new String[] {"Faible", "Mod\u00E9r\u00E9", "\u00E9lev\u00E9", "Extr\u00E8me"}));
+		toxiciteCombo.setBounds(197, 94, 89, 22);
+		add(toxiciteCombo);
 		
-		JLabel lblNewLabel_2 = new JLabel("New label");
-		lblNewLabel_2.setBounds(54, 165, 49, 14);
+		JLabel lblNewLabel_2 = new JLabel("Nombre");
+		lblNewLabel_2.setBounds(54, 126, 49, 14);
 		add(lblNewLabel_2);
 		
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setBounds(54, 200, 30, 22);
-		add(comboBox_1);
-		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.setBounds(179, 200, 89, 23);
+		JButton btnNewButton = new JButton("Valider");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Manager manager = new Manager();
+				//manager.insertMedic(nomChamp.getText(), toxiciteCombo.getSelectedItem().toString(), );
+			}
+		});
+		btnNewButton.setBounds(197, 147, 89, 23);
 		add(btnNewButton);
+		
+		JSpinner nombreSpinner = new JSpinner();
+		nombreSpinner.setBounds(64, 151, 30, 20);
+		add(nombreSpinner);
 
 	}
 }
