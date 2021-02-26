@@ -1,4 +1,5 @@
 package manager;
+import java.sql.Date;  
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
@@ -7,8 +8,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import entity.Medicaments;
 import entity.Rdv;
@@ -135,6 +139,16 @@ public class Manager {
 		}
 		return liste;
 	}
+	public ArrayList<String> selectNomMedic() throws SQLException {
+		String sql = "SELECT * FROM medicaments";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		ResultSet rs = pstm.executeQuery();
+		ArrayList<String> liste = new ArrayList<String>();
+		while(rs.next()) {
+			liste.add(rs.getString("nom"));
+		}
+		return liste;
+	}
 	public void insertMedic(String nom, String toxicite, int nb) throws SQLException {//Ajout de médicaments
 		String sql = "SELECT * FROM medicaments WHERE nom = ?";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
@@ -158,8 +172,23 @@ public class Manager {
 			boolean se = pstm.execute();
 		}		
 	}
+	public void getMedic(String nom, int nombre) throws SQLException {
+		String sql = "SELECT * FROM medicaments WHERE nom = ?";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setString(1, nom);
+		ResultSet rs = pstm.executeQuery();
+		if (rs.next()) {
+			int nombreIni = rs.getInt("nb");
+			
+			sql = "UPDATE medicaments SET nb = ? WHERE nom = ?";
+			pstm = this.getJbdc().prepareStatement(sql);
+			pstm.setInt(1, nombreIni-nombre);
+			pstm.setString(2, nom);
+			pstm.execute();
+		}
+	}
 	public void updateMedic(String nom, String toxicite, int nb) throws SQLException {//Modification des médicaments
-		String sql = "UPDATE medicaments SET nom='?', toxicite='?', nb='?'";
+		String sql = "UPDATE medicaments SET nom=?, toxicite=?, nb=?";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
 		while (rs.next()) {
@@ -183,26 +212,32 @@ public class Manager {
 		}
 	}
 	
-	public void selectMedecin() throws SQLException {//Afficher médecin
-		String sql = "SELECT nom, prenom, mail, specialites.nom_spe as specialites, medecin.telephone, medecin.lieu FROM utilisateur \r\n"
-				+ "INNER JOIN medecin ON utilisateur.id = medecin.id_user \r\n"
-				+ "INNER JOIN specialites ON medecin.id_specialite = specialites.id \r\n"
-				+ "WHERE role_user = 'medecin'";
+	public Map<String, String> selectMedecin() throws SQLException {//Afficher médecin
+		String sql = "SELECT nom, medecin.id FROM utilisateur INNER JOIN medecin ON medecin.id_user = utilisateur.id";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
+		Map<String,String> ficheInfo = new HashMap<String,String>();
 		while(rs.next()) {
-			ArrayList<Object> ficheInfo = new ArrayList<Object>();
-			ficheInfo.add(rs.getString("nom"));
-			ficheInfo.add(rs.getString("prenom"));
-			ficheInfo.add(rs.getString("mail"));
-			ficheInfo.add(rs.getString("specialites"));
-			ficheInfo.add(rs.getString("telephone"));
-			ficheInfo.add(rs.getString("lieu"));
-			
-			for(int i = 0; i < ficheInfo.size(); i++) {
-				System.out.println(ficheInfo.get(i));
-			}
+			ficheInfo.put(rs.getString("id"),rs.getString("nom"));
 		}
+		return ficheInfo;
+	}
+	public ArrayList<ArrayList> selectHeureDispo(String id, String date) throws SQLException {
+		String sql = "SELECT * FROM heure WHERE id not in (SELECT heure_id FROM rdv WHERE id_medecin= ? AND date_rdv = ? )";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		String[] result = date.split("-");
+		Date daate = Date.valueOf(result[2]+"-"+result[1]+"-"+result[0]);
+		pstm.setString(1,id);
+		pstm.setDate(2,daate);
+		ResultSet rs = pstm.executeQuery();
+		ArrayList<ArrayList> rdvs = new ArrayList<ArrayList>();
+		while(rs.next()) {
+			ArrayList<String> subarray = new ArrayList<String>();
+			subarray.add(rs.getString("id"));
+			subarray.add(rs.getString("nom_heure"));
+			rdvs.add(subarray);
+		}
+		return rdvs;
 	}
 	
 	public void exportMedic() throws SQLException {//Exportation des produits		

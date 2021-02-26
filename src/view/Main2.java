@@ -53,7 +53,7 @@ public class Main2 {
 		frame.getContentPane().setLayout(null);
 		
 		
-		panel_1.setBounds(120, 11, 800, 500);
+		panel_1.setBounds(5, 11, 800, 763);
 		frame.getContentPane().add(panel_1);
 		
 		JMenuBar menuBar = new JMenuBar();

@@ -89,8 +89,11 @@ public class MedicamentTable extends JPanel {
 		JLabel mediLabel = new JLabel("M\u00E9dicament");
 		mediLabel.setBounds(10, 22, 49, 14);
 		panel_1.add(mediLabel);
+		Manager manager = new Manager();
+		ArrayList<String> listeMedic = manager.selectNomMedic();
 		
 		JComboBox mediComboBox = new JComboBox();
+		mediComboBox.setModel(new DefaultComboBoxModel(listeMedic.toArray()));
 		mediComboBox.setBounds(10, 36, 74, 22);
 		panel_1.add(mediComboBox);
 		
@@ -100,6 +103,21 @@ public class MedicamentTable extends JPanel {
 		panel_1.add(nombreSpinner);
 		
 		JButton btnNewButton = new JButton("Retirer");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Manager manager = new Manager();
+				try {
+					manager.getMedic(mediComboBox.getSelectedItem().toString(),Integer.parseInt(nombreSpinner.getValue().toString()));
+					makeTable();
+				} catch (NumberFormatException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnNewButton.setBounds(10, 124, 74, 23);
 		panel_1.add(btnNewButton);
 		makeTable();
