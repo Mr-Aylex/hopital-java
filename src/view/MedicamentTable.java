@@ -11,15 +11,21 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+
 import java.awt.Button;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -138,6 +144,9 @@ public class MedicamentTable extends JPanel {
 				}
 			}
 		});
+		
+		
+		
 	}
 
 	public void makeTable() throws SQLException {
@@ -155,6 +164,18 @@ public class MedicamentTable extends JPanel {
 		});
 		table.setBounds(44, 103, 430, 249);
 		table.setModel(dtm);
+		int nbR = table.getRowCount();
+		/*
+		for(int i = 0; i < nbR; i++) {
+			if(Integer.valueOf(table.getValueAt(i,2).toString())<10) {
+				TableCellRenderer t = table.getCellRenderer(i,2);
+				((JComponent) t).setBackground(Color.RED);
+			}
+			
+		}*/
+		int row = 0;
+		int col = 2;
+		table.getCellRenderer(row, col).getTableCellRendererComponent(table, null, false, false, row, col).setBackground(Color.BLUE);
 		
 	}
 }

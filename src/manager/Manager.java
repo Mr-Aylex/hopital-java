@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.mysql.cj.xdevapi.Statement;
+
 import entity.Medicaments;
 import entity.Rdv;
 
@@ -67,14 +69,41 @@ public class Manager {
 			return false;
 		}
 	}
-	public void insertUser(String nom, String prenom, String mail, String mdp, String role_user) throws SQLException {//Création d'un profil admin ou patient
+	public int insertUser(String nom, String prenom, String mail, String mdp, String role_user) throws SQLException {//Création d'un profil admin ou patient
 		String sql = "INSERT INTO utilisateur(nom, prenom, mail, mdp, role_user) VALUES (?,?,?,?,?)";
-		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
 		pstm.setString(1, nom);
 		pstm.setString(2, prenom);
 		pstm.setString(3, mail);
 		pstm.setString(4, mdp);
 		pstm.setString(5, role_user);
+		pstm.executeUpdate();
+		ResultSet rs = pstm.getGeneratedKeys();
+		System.out.println("voilà");
+		while(rs.next()) {
+			System.out.println(rs.getInt(1));
+			return rs.getInt(1);
+		}
+		return 0;
+		
+	}
+	public void insertRdv(String nom, String prenom, String mail, int id_medecin, String date_rdv, int heure_id) throws SQLException {//Création d'un profil admin ou patient
+		int id_patient = insertUser(nom, prenom, mail, "123456","utilisateur");
+		System.out.println(nom);
+		System.out.println(prenom);
+		System.out.println(mail);
+		System.out.println(id_medecin);
+		System.out.println(date_rdv);
+		System.out.println(heure_id);
+		String[] result = date_rdv.split("-");
+		Date daate = Date.valueOf(result[2]+"-"+result[1]+"-"+result[0]);
+		String sql = "INSERT INTO rdv (id_patient, id_medecin, id_motif, date_rdv, heure_id) VALUES (?, ?, ?, ?, ?)";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setInt(1, id_patient);
+		pstm.setInt(2, id_medecin);
+		pstm.setInt(3, 2);
+		pstm.setDate(4, daate);
+		pstm.setInt(5, heure_id);
 		
 		int rs = pstm.executeUpdate();
 		try {
@@ -86,22 +115,21 @@ public class Manager {
 			e.printStackTrace();
 		}
 	}
-	public void selectUser() throws SQLException {//Affichage des utilisateurs
+	public ArrayList<ArrayList> selectUser() throws SQLException {//Affichage des utilisateurs
 		String sql = "SELECT * FROM utilisateur";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		ResultSet rs = pstm.executeQuery();
+		ArrayList<ArrayList> users = new ArrayList<ArrayList>();
 		while(rs.next()) {
-			ArrayList<Object> users = new ArrayList<Object>();
-			users.add(rs.getString("nom"));
-			users.add(rs.getString("prenom"));
-			users.add(rs.getString("mail"));
-			users.add(rs.getString("mdp"));
-			users.add(rs.getString("role_user"));
-			
-			for(int i = 0; i < users.size(); i++) {
-				System.out.println(users.get(i));
-			}
+			ArrayList<String> user = new ArrayList<String>();
+			user.add(rs.getString("nom"));
+			user.add(rs.getString("prenom"));
+			user.add(rs.getString("mail"));
+			user.add(rs.getString("mdp"));
+			user.add(rs.getString("role_user"));
+			users.add(user);
 		}
+		return users;
 	}
 	public void updateUser(String nom, String prenom, String mail, String mdp) throws SQLException {//Modification du profil
 		String sql = "SELECT * FROM utilisateur WHERE nom = ?";

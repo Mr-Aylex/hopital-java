@@ -46,6 +46,8 @@ public class RdvView extends JPanel {
 	private String url = "jdbc:mysql://localhost/hopital?serverTimezone=UTC";
 	private String user = "root";
 	private String password = "";
+	private ArrayList<ArrayList> heureDispo;
+	private int idHeure = 0;
 	private JTable table;
 	private JTable table_1;
 	private JComboBox nomComboBox;
@@ -74,7 +76,7 @@ public class RdvView extends JPanel {
 				}
 			}
 		});
-		refreshBtn.setBounds(23, 48, 89, 23);
+		refreshBtn.setBounds(23, 81, 89, 23);
 		add(refreshBtn);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -143,6 +145,43 @@ public class RdvView extends JPanel {
 		JButton rendezVousBtn = new JButton("Valider");
 		rendezVousBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				Manager manager = new Manager();
+				
+				int col = table_1.getSelectedColumn();
+				int row = table_1.getSelectedRow();
+				String o = (String)table_1.getValueAt(row, col);
+				idHeure = 0;
+				System.out.println(heureDispo);
+				heureDispo.forEach((h) -> {
+					if(h.get(1) == o) {
+						idHeure = Integer.valueOf((String) h.get(0));
+					}
+				});
+				Map<String, String> medecin;
+				String id = "0";
+				try {
+					medecin = manager.selectMedecin();
+					ArrayList<String> nomMedecin = new ArrayList<String>();
+					
+					for (String i : medecin.keySet()) {
+						if(nomComboBox.getSelectedItem().toString().equals(medecin.get(i))) {
+							id = i;
+						}
+					}
+					
+				} catch (SQLException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				
+				System.out.println(o);
+				
+				try {
+					manager.insertRdv(nomTextField.getText(), prenomTextField.getText(), mailTextField.getText(), Integer.valueOf(id), dateComboBox.getSelectedItem().toString(), idHeure);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		rendezVousBtn.setBounds(208, 229, 86, 23);
@@ -196,9 +235,8 @@ public Connection getJbdc() {
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 		ResultSet rs = pstm.executeQuery();ArrayList<ArrayList> array = new ArrayList<ArrayList>();
 		
-		ArrayList<String> subarray = new ArrayList<String>();
 		while (rs.next()) {
-			System.out.println(rs.getString("nom"));
+			ArrayList<String> subarray = new ArrayList<String>();
 			subarray.add(rs.getString("nom"));
 			subarray.add(rs.getString("prenom"));
 			subarray.add(rs.getString("date_rdv"));
@@ -241,14 +279,14 @@ public Connection getJbdc() {
 		
 		DefaultTableModel dtm = new DefaultTableModel(0, 0);
 		
-		ArrayList<ArrayList> array  = manager.selectHeureDispo(id,dateComboBox.getSelectedItem().toString());
+		heureDispo  = manager.selectHeureDispo(id,dateComboBox.getSelectedItem().toString());
 		//SELECT nom , medecin.id FROM utilisateur INNER JOIN medecin ON medecin.id_user = utilisateur.id
 		//SELECT * FROM heure WHERE id not in (SELECT heure_id FROM rdv WHERE id_medecin=:id_medecin AND date_rdv = :date_rdv
 		 
 		String header[] = new String[] { "Heure" };
 		
 		dtm.setColumnIdentifiers(header);
-		array.forEach((a) -> {
+		heureDispo.forEach((a) -> {
 			dtm.addRow(new String[] {(String) a.get(1)});
 		});
 		
@@ -256,4 +294,7 @@ public Connection getJbdc() {
 		table_1.setBounds(44, 103, 430, 249);
 		table_1.setModel(dtm);
 	}
+	//public Object getHeureId(ArrayList<ArrayList> array, String o) {
+		
+	//}
 }

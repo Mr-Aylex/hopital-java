@@ -99,5 +99,22 @@ public class Main2 {
 			}
 		});
 		menuBar.add(btnNewButton_3);
+		
+		JButton profilBtn = new JButton("Profils");
+		profilBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				Main2 window;
+				try {
+					window = new Main2(new newProfil());
+					window.frame.setVisible(true);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
+		});
+		menuBar.add(profilBtn);
 	}
 }
