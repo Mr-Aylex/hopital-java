@@ -145,7 +145,12 @@ public class MedicamentTable extends JPanel {
 			}
 		});
 		
-		
+		mediComboBox.addActionListener(new ActionListener () {
+			public void actionPerformed(ActionEvent  e) {
+				
+				nombreSpinner.setModel(new SpinnerNumberModel(0, 0, 50, 1));
+			}
+		});
 		
 	}
 
@@ -161,6 +166,7 @@ public class MedicamentTable extends JPanel {
 		
 		array.forEach((a) -> {
 			dtm.addRow(new String[] {(String) a.get(0), (String) a.get(1), (String) String.valueOf(a.get(2))});
+			
 		});
 		table.setBounds(44, 103, 430, 249);
 		table.setModel(dtm);
@@ -173,9 +179,15 @@ public class MedicamentTable extends JPanel {
 			}
 			
 		}*/
+		
 		int row = 0;
 		int col = 2;
-		table.getCellRenderer(row, col).getTableCellRendererComponent(table, null, false, false, row, col).setBackground(Color.BLUE);
+		//table.getCellRenderer(0, 0).getTableCellRendererComponent(table, null, false, false, -1, 0).setBackground(Color.BLUE);
 		
 	}
+	/*public Component prepareRendered(TableCellRenderer rederer, int row, int column) {
+		Component comp = table.prepareRendered(rederer, row, column);
+		return null;
+		
+	}*/
 }

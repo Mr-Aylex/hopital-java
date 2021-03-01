@@ -70,31 +70,50 @@ public class Manager {
 		}
 	}
 	public int insertUser(String nom, String prenom, String mail, String mdp, String role_user) throws SQLException {//Création d'un profil admin ou patient
-		String sql = "INSERT INTO utilisateur(nom, prenom, mail, mdp, role_user) VALUES (?,?,?,?,?)";
-		PreparedStatement pstm = this.getJbdc().prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
-		pstm.setString(1, nom);
-		pstm.setString(2, prenom);
-		pstm.setString(3, mail);
-		pstm.setString(4, mdp);
-		pstm.setString(5, role_user);
-		pstm.executeUpdate();
-		ResultSet rs = pstm.getGeneratedKeys();
-		System.out.println("voilà");
-		while(rs.next()) {
-			System.out.println(rs.getInt(1));
-			return rs.getInt(1);
+		String sql = "SELECT id FROM utilisateur WHERE mail = ? OR nom = ? and prenom = ?";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setString(1, mail);
+		pstm.setString(2, nom);
+		pstm.setString(3, prenom);
+		ResultSet rs = pstm.executeQuery();
+		if(!rs.next()) {
+			sql = "INSERT INTO utilisateur(nom, prenom, mail, mdp, role_user) VALUES (?,?,?,?,?)";
+			pstm = this.getJbdc().prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+			pstm.setString(1, nom);
+			pstm.setString(2, prenom);
+			pstm.setString(3, mail);
+			pstm.setString(4, mdp);
+			pstm.setString(5, role_user);
+			pstm.executeUpdate();
+			rs = pstm.getGeneratedKeys();
+			System.out.println("voilà");
+			while(rs.next()) {
+				System.out.println(rs.getInt(1));
+				return rs.getInt(1);
+			}	
+		}
+		else {
+			System.out.println("Il existe déjà");
+			return rs.getInt("id");
 		}
 		return 0;
 		
 	}
+	public void insertMedecin(String nom, String prenom, String mail,String mdp, String num, String lieu, String idSpetialite) throws SQLException {
+		int idMedecin = insertUser(nom, prenom, mail, mdp, "medecin");
+		System.out.println(num);
+		System.out.println(lieu);
+		System.out.println(idSpetialite);
+		String sql = "INSERT INTO medecin (id_user, id_specialite, telephone, lieu) VALUES (?, ?, ?, ?) ";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setInt(1, idMedecin);
+		pstm.setString(2, idSpetialite);
+		pstm.setString(3, num);
+		pstm.setString(4, lieu);
+		int rs = pstm.executeUpdate();
+	}
 	public void insertRdv(String nom, String prenom, String mail, int id_medecin, String date_rdv, int heure_id) throws SQLException {//Création d'un profil admin ou patient
 		int id_patient = insertUser(nom, prenom, mail, "123456","utilisateur");
-		System.out.println(nom);
-		System.out.println(prenom);
-		System.out.println(mail);
-		System.out.println(id_medecin);
-		System.out.println(date_rdv);
-		System.out.println(heure_id);
 		String[] result = date_rdv.split("-");
 		Date daate = Date.valueOf(result[2]+"-"+result[1]+"-"+result[0]);
 		String sql = "INSERT INTO rdv (id_patient, id_medecin, id_motif, date_rdv, heure_id) VALUES (?, ?, ?, ?, ?)";
@@ -115,6 +134,17 @@ public class Manager {
 			e.printStackTrace();
 		}
 	}
+	public Map<String, String> selectSpetialite() throws SQLException {
+		String sql = "SELECT * FROM specialites";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		ResultSet rs = pstm.executeQuery();
+		Map<String, String> spetialites = new HashMap<String,String>();
+		while (rs.next()) {
+			spetialites.put(rs.getString("id"), rs.getString("nom_spe"));
+		}
+		return spetialites;
+	}
+	
 	public ArrayList<ArrayList> selectUser() throws SQLException {//Affichage des utilisateurs
 		String sql = "SELECT * FROM utilisateur";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);

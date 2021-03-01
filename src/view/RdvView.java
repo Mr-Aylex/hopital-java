@@ -63,7 +63,7 @@ public class RdvView extends JPanel {
 	public RdvView() throws SQLException {
 		setBackground(SystemColor.textHighlight);
 		setLayout(null);
-		
+		System.out.println("rdvView");
 		JButton refreshBtn = new JButton("Refresh");
 		refreshBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -115,7 +115,7 @@ public class RdvView extends JPanel {
 		table_1 = new JTable();
 		scrollPane_1.setViewportView(table_1);
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("d-MM-uuuu");
-		LocalDate now = LocalDate.now();
+		LocalDate now = LocalDate.now().plusDays(1);
 		
 		ArrayList<String> date = new ArrayList<String>();
 		dateComboBox = new JComboBox();
