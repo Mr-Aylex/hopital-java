@@ -7,6 +7,10 @@ import javax.swing.JPanel;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
+
+import entity.Utilisateur;
+import global.variableGlobal;
+
 import com.jgoodies.forms.layout.FormSpecs;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -16,9 +20,17 @@ import java.awt.Color;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-public class Main2 {
+public class Main2 extends variableGlobal {
 
 	private JFrame frame;
+	private JMenuBar menuBar;
+	private JButton RendezVousButton;
+	private JButton MedicButton;
+	private JButton NewMedButton;
+	private JButton profilBtn;
+	private JButton deconnexionButton;
+	private JButton UserButton;
+	private JButton modificationButton;
 	/**
 	 * Launch the application.
 	 */
@@ -56,65 +68,134 @@ public class Main2 {
 		panel_1.setBounds(5, 11, 800, 763);
 		frame.getContentPane().add(panel_1);
 		
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 		
-		JButton btnNewButton_1 = new JButton("Rendez-Vous");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		RendezVousButton = new JButton("Rendez-Vous");
+		RendezVousButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
-				Main2 window;
-				try {
-					window = new Main2(new RdvView());
-					window.frame.setVisible(true);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
-		menuBar.add(btnNewButton_1);
-		
-		JButton btnNewButton_2 = new JButton("M\u00E9dicament");
-		btnNewButton_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
+				System.out.println("check user");
+				Utilisateur user = getUser();
+				String roleUser = user.getRole_user();
+				if(roleUser.equals("admin") || roleUser.equals("medecin")) {
 					frame.setVisible(false);
-					Main2 window = new Main2(new MedicamentTable());
-					window.frame.setVisible(true);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					Main2 window;
+					try {
+						window = new Main2(new RdvView());
+						window.frame.setVisible(true);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
-		menuBar.add(btnNewButton_2);
 		
-		JButton btnNewButton_3 = new JButton("Nouveau M\u00E9dicament");
-		btnNewButton_3.addActionListener(new ActionListener() {
+		
+		MedicButton = new JButton("M\u00E9dicament");
+		MedicButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
-				Main2 window = new Main2(new MedicamentNew());
-				window.frame.setVisible(true);
+				System.out.println("check user");
+				Utilisateur user = getUser();
+				String roleUser = user.getRole_user();
+				if(roleUser.equals("admin") || roleUser.equals("gestion")) {
+					try {
+						frame.setVisible(false);
+						Main2 window = new Main2(new MedicamentTable());
+						window.frame.setVisible(true);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 			}
 		});
-		menuBar.add(btnNewButton_3);
 		
-		JButton profilBtn = new JButton("Profils");
+		
+		NewMedButton = new JButton("Nouveau M\u00E9dicament");
+		NewMedButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("check user");
+				Utilisateur user = getUser();
+				String roleUser = user.getRole_user();
+				if(roleUser.equals("admin") || roleUser.equals("gestion")) {
+					frame.setVisible(false);
+					Main2 window = new Main2(new MedicamentNew());
+					window.frame.setVisible(true);
+				}
+			}
+		});
+		
+		
+		profilBtn = new JButton("Profils");
 		profilBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
-				Main2 window;
-				try {
-					window = new Main2(new newProfil());
-					window.frame.setVisible(true);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				System.out.println("check user");
+				Utilisateur user = getUser();
+				String roleUser = user.getRole_user();
+				if(roleUser.equals("admin") ) {
+
+					System.out.println("admin");
+				
+					frame.setVisible(false);
+					Main2 window;
+					try {
+						window = new Main2(new newProfil());
+						window.frame.setVisible(true);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 				
 			}
 		});
+		
+		
+		deconnexionButton = new JButton("D\u00E9connexion");
+		deconnexionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				setUser(null);
+				Connexion window = new Connexion();
+				window.setVisible(true);
+				
+			}
+		});
+		
+		
+		UserButton = new JButton("ShowUser");
+		UserButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				System.out.println("check user");
+				Utilisateur user = getUser();
+				String roleUser = user.getRole_user();
+				System.out.println(getUser());
+				
+			}
+		});
+		
+		menuBar.add(RendezVousButton);
+		menuBar.add(deconnexionButton);
 		menuBar.add(profilBtn);
+		menuBar.add(UserButton);
+		menuBar.add(NewMedButton);
+		menuBar.add(MedicButton);
+		
+		modificationButton = new JButton("Modification");
+		modificationButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				Main2 window;
+				window = new Main2(new Modification(getUser()));
+				window.frame.setVisible(true);
+			}
+		});
+		menuBar.add(modificationButton);
+		//menuBar.removeAll();
+		
 	}
+	
+
 }

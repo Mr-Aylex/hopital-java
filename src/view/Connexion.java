@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import manager.Manager;
+import entity.Utilisateur;
 
 
 public class Connexion extends JFrame {
@@ -70,15 +71,20 @@ public class Connexion extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				Manager manager = new Manager();
 				try {
-					if(manager.loginUser(mailChamp.getText(),mdpChamp.getText())) {
+					Utilisateur user = manager.loginUser(mailChamp.getText(),mdpChamp.getText());
+					System.out.println(user);
+					if(user != null) {
 						frame.setVisible(false);
 						Main2 prg = new Main2(new JPanel());
+						prg.setUser(user);
+						System.out.println(prg.getUser());
 						prg.main(null);
 					}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
 			}
 		});
 		submitBtn.setBounds(106, 149, 89, 23);

@@ -172,7 +172,7 @@ public class newProfil extends JPanel {
 								id = i;
 							}
 						}
-					 manager.insertMedecin(nomTextField.getText(), prenomTextField.getText(), mailLabel.getText(), passwordField.getText(),telTexfield.getText(), lieuTextField.getText(), id);
+					 manager.insertMedecin(nomTextField.getText(), prenomTextField.getText(), mailTextField.getText(), passwordField.getText(),telTexfield.getText(), lieuTextField.getText(), id);
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -181,7 +181,7 @@ public class newProfil extends JPanel {
 				else {
 					if(passwordField.getText().equals(passwordField2.getText())) {
 						try {
-							manager.insertUser(nomTextField.getText(), prenomTextField.getText(), mailLabel.getText(), passwordField.getText(), roleComboBox.getSelectedItem().toString());
+							manager.insertUser(nomTextField.getText(), prenomTextField.getText(), mailTextField.getText(), passwordField.getText(), roleComboBox.getSelectedItem().toString());
 							makeTable();
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block

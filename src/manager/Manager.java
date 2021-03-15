@@ -16,8 +16,10 @@ import java.util.Map;
 
 import com.mysql.cj.xdevapi.Statement;
 
+import entity.Medecin;
 import entity.Medicaments;
 import entity.Rdv;
+import entity.Utilisateur;
 
 public class Manager {
 	private String url = "jdbc:mysql://localhost/hopital?serverTimezone=UTC";
@@ -54,27 +56,27 @@ public class Manager {
 			System.out.print(rs.getString("nom"));
 		}
 	}
-	public boolean loginUser(String mail, String mdp) throws SQLException {//Connexion à l'interface de gestion
+	public Utilisateur loginUser(String mail, String mdp) throws SQLException {//Connexion à l'interface de gestion
 		String sql = "SELECT * FROM utilisateur WHERE mail = ? AND mdp = ?";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		pstm.setString(1, mail);
 		pstm.setString(2, mdp);
 		ResultSet rs = pstm.executeQuery();
+		Utilisateur user = null;
 		if(rs.next() ) {
-			System.out.println(" oui");
-			return true;
+			user = new  Utilisateur(rs.getInt("id"), rs.getString("nom"), rs.getString("prenom"), rs.getString("mail"), rs.getString("mdp"), rs.getString("role_user"));
+			System.out.println("oui");
 		}
-		else {
-			System.out.println(" non");
-			return false;
-		}
+		return user;
 	}
+	
 	public int insertUser(String nom, String prenom, String mail, String mdp, String role_user) throws SQLException {//Création d'un profil admin ou patient
-		String sql = "SELECT id FROM utilisateur WHERE mail = ? OR nom = ? and prenom = ?";
+		String sql = "SELECT id FROM utilisateur WHERE mail = ? or (nom = ? and prenom = ?)";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		pstm.setString(1, mail);
 		pstm.setString(2, nom);
 		pstm.setString(3, prenom);
+		
 		ResultSet rs = pstm.executeQuery();
 		if(!rs.next()) {
 			sql = "INSERT INTO utilisateur(nom, prenom, mail, mdp, role_user) VALUES (?,?,?,?,?)";
@@ -86,14 +88,11 @@ public class Manager {
 			pstm.setString(5, role_user);
 			pstm.executeUpdate();
 			rs = pstm.getGeneratedKeys();
-			System.out.println("voilà");
 			while(rs.next()) {
-				System.out.println(rs.getInt(1));
 				return rs.getInt(1);
 			}	
 		}
 		else {
-			System.out.println("Il existe déjà");
 			return rs.getInt("id");
 		}
 		return 0;
@@ -161,28 +160,56 @@ public class Manager {
 		}
 		return users;
 	}
-	public void updateUser(String nom, String prenom, String mail, String mdp) throws SQLException {//Modification du profil
-		String sql = "SELECT * FROM utilisateur WHERE nom = ?";
+	public Utilisateur updateUser(String nom, String prenom, String mail, int id) throws SQLException {//Modification du profil
+		String sql = "UPDATE utilisateur SET nom=?, prenom=?, mail=? WHERE id = ?";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
 		pstm.setString(1, nom);
+		pstm.setString(2, prenom);
+		pstm.setString(3, mail);
+		pstm.setInt(4, id);
+		int rowsUpdated = pstm.executeUpdate();
+		
+		if(rowsUpdated > 0) {
+			System.out.println("Le profil a été modifié");
+		}
+		else {
+			System.out.println("Veuillez réessayer");
+		}
+		sql = "SELECT * FROM utilisateur WHERE nom = ? and prenom = ? and mail = ?";
+		pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setString(1, nom);
+		pstm.setString(2, prenom);
+		pstm.setString(3, mail);
 		ResultSet rs = pstm.executeQuery();
 		while(rs.next()) {
-			sql = "UPDATE utilisateur SET nom='?', prenom='?', mail='?', mdp='?'";
-			pstm = this.getJbdc().prepareStatement(sql);
-			pstm.setString(1, nom);
-			pstm.setString(2, prenom);
-			pstm.setString(3, mail);
-			pstm.setString(4, mdp);
-			
-			int rowsUpdated = pstm.executeUpdate();
-			if(rowsUpdated > 0) {
-				System.out.println("Le profil a été modifié");
-			}
-			else {
-				System.out.println("Veuillez réessayer");
-			}
+			Utilisateur utilisateur = new  Utilisateur(rs.getInt("id"), rs.getString("nom"), rs.getString("prenom"), rs.getString("mail"), rs.getString("mdp"), rs.getString("role_user"));
+			return utilisateur;
 		}
+		return null;
+		
 	}
+	public Medecin hydratMedecin(int id_user) throws SQLException {
+		String sql = "SELECT * FROM medecin WHERE id_user = ?";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setInt(1, id_user);
+		ResultSet rs = pstm.executeQuery();
+		while(rs.next()) {
+			Medecin medecin = new  Medecin(rs.getInt("id"), rs.getInt("id_user"), rs.getInt("id_specialite"), rs.getString("telephone"), rs.getString("lieu"));
+			return medecin;
+		}
+		return null;
+	}
+	
+	public void updateMedecin(String lieu, String tel, int id) throws SQLException {
+		String sql = "UPDATE medecin SET lieu = ?, telephone = ? WHERE id_user = ?";
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
+		pstm.setString(1, lieu);
+		pstm.setString(2, tel);
+		pstm.setInt(3, id);
+		int rowsUpdated = pstm.executeUpdate();
+		System.out.println("Medecin modifier");
+	}
+	
 	public ArrayList<ArrayList> selectMedic() throws SQLException {//Affichage de tous les médicaments
 		String sql = "SELECT * FROM medicaments";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
