@@ -179,7 +179,7 @@ public class Main2 extends variableGlobal {
 		menuBar.add(RendezVousButton);
 		menuBar.add(deconnexionButton);
 		menuBar.add(profilBtn);
-		menuBar.add(UserButton);
+		//menuBar.add(UserButton);
 		menuBar.add(NewMedButton);
 		menuBar.add(MedicButton);
 		

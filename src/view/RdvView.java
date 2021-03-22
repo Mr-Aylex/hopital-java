@@ -7,6 +7,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import entity.Medicaments;
 import manager.Manager;
+import global.variableGlobal;
 
 import com.jgoodies.forms.layout.FormSpecs;
 import javax.swing.JTextField;
@@ -43,9 +44,7 @@ import java.beans.PropertyChangeEvent;
 import java.awt.SystemColor;
 
 public class RdvView extends JPanel {
-	private String url = "jdbc:mysql://localhost/hopital?serverTimezone=UTC";
-	private String user = "root";
-	private String password = "";
+
 	private ArrayList<ArrayList> heureDispo;
 	private int idHeure = 0;
 	private JTable table;
@@ -98,6 +97,9 @@ public class RdvView extends JPanel {
 		Manager manager = new Manager();
 		Map<String,String> medecin = manager.selectMedecin();
 		ArrayList<String> nomMedecin = new ArrayList<String>();
+		if (variableGlobal.getUser().getRole_user()=="medecin") {
+			
+		}
 		int j = 0;
 		for (String i : medecin.keySet()) {
 			nomMedecin.add(medecin.get(i));
@@ -182,6 +184,13 @@ public class RdvView extends JPanel {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				table.removeAll();
+				try {
+					makeTable(table);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		rendezVousBtn.setBounds(208, 229, 86, 23);
@@ -214,44 +223,27 @@ public class RdvView extends JPanel {
 		mailNewLabel.setBounds(208, 159, 46, 14);
 		panel.add(mailNewLabel);
 	}
-public Connection getJbdc() {
-		
-		try {
-			Connection cnx = DriverManager.getConnection(this.url,this.user,this.password);
-			System.out.print("Etat de la connexion :");
-			System.out.print(cnx.isClosed()?"fermée":"ouverte \r\n");
-			return cnx;
-			
-		} catch (SQLException e) {
-			System.out.print("erreur");
-			e.printStackTrace();
-			return null;
-		}
-	}
-	public ArrayList<ArrayList> getRdv() throws SQLException {
-		String sql = "SELECT utilisateur.nom, utilisateur.prenom, heure.nom_heure, date_rdv, motif.nom_motif FROM rdv"
-				+ " INNER JOIN utilisateur ON utilisateur.id = rdv.id_patient INNER JOIN medecin ON rdv.id_medecin = medecin.id"
-				+ " INNER JOIN motif ON rdv.id_motif = motif.id INNER JOIN heure ON rdv.heure_id = heure.id";
-		PreparedStatement pstm = this.getJbdc().prepareStatement(sql,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-		ResultSet rs = pstm.executeQuery();ArrayList<ArrayList> array = new ArrayList<ArrayList>();
-		
-		while (rs.next()) {
-			ArrayList<String> subarray = new ArrayList<String>();
-			subarray.add(rs.getString("nom"));
-			subarray.add(rs.getString("prenom"));
-			subarray.add(rs.getString("date_rdv"));
-			subarray.add(rs.getString("nom_heure"));
-			subarray.add(rs.getString("nom_motif"));
-			array.add(subarray);
-		}
-		return array;
-		//
-	}
+
+	
 	public void makeTable(JTable table) throws SQLException {
 		DefaultTableModel dtm = new DefaultTableModel(0, 0);
 		
 		Manager manager = new Manager();
-		ArrayList<ArrayList> array  = this.getRdv();
+		
+		Map<String, String> medecin;
+		String id = "0";
+		medecin = manager.selectMedecin();
+		ArrayList<String> nomMedecin = new ArrayList<String>();
+		
+		for (String i : medecin.keySet()) {
+			if(variableGlobal.getUser().getNom().equals(medecin.get(i))) {
+				id = i;
+			}
+		}
+		System.out.println(variableGlobal.getUser().getNom());
+		
+		System.out.println(id);
+		ArrayList<ArrayList> array  = manager.getRdv(id);
 		
 		String header[] = new String[] { "Nom", "Prenom", "Date", "Heure", "Motif" };
 		

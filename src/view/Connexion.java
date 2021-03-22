@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import manager.Manager;
 import entity.Utilisateur;
+import java.awt.Color;
 
 
 public class Connexion extends JFrame {
@@ -44,6 +45,7 @@ public class Connexion extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 370, 300);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(30, 144, 255));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);

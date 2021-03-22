@@ -98,6 +98,30 @@ public class Manager {
 		return 0;
 		
 	}
+	public ArrayList<ArrayList> getRdv(String id) throws SQLException {
+		String req = "";
+		if (!id.equals("0")) {
+			req = "WHERE medecin.id = " + id;
+		}
+		String sql = "SELECT utilisateur.nom, utilisateur.prenom, heure.nom_heure, date_rdv, motif.nom_motif FROM rdv"
+				+ " INNER JOIN utilisateur ON utilisateur.id = rdv.id_patient INNER JOIN medecin ON rdv.id_medecin = medecin.id"
+				+ " INNER JOIN motif ON rdv.id_motif = motif.id INNER JOIN heure ON rdv.heure_id = heure.id " + req;
+		
+		PreparedStatement pstm = this.getJbdc().prepareStatement(sql,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = pstm.executeQuery();ArrayList<ArrayList> array = new ArrayList<ArrayList>();
+		
+		while (rs.next()) {
+			ArrayList<String> subarray = new ArrayList<String>();
+			subarray.add(rs.getString("nom"));
+			subarray.add(rs.getString("prenom"));
+			subarray.add(rs.getString("date_rdv"));
+			subarray.add(rs.getString("nom_heure"));
+			subarray.add(rs.getString("nom_motif"));
+			array.add(subarray);
+		}
+		return array;
+	}
+	
 	public void insertMedecin(String nom, String prenom, String mail,String mdp, String num, String lieu, String idSpetialite) throws SQLException {
 		int idMedecin = insertUser(nom, prenom, mail, mdp, "medecin");
 		System.out.println(num);
@@ -272,16 +296,14 @@ public class Manager {
 			pstm.execute();
 		}
 	}
-	public void updateMedic(String nom, String toxicite, int nb) throws SQLException {//Modification des médicaments
-		String sql = "UPDATE medicaments SET nom=?, toxicite=?, nb=?";
+	public void updateMedic(String nom, String toxicite, String nomInitial) throws SQLException {//Modification des médicaments
+		String sql = "UPDATE medicaments SET nom=?, toxicite=? WHERE nom=?";
 		PreparedStatement pstm = this.getJbdc().prepareStatement(sql);
-		ResultSet rs = pstm.executeQuery();
-		while (rs.next()) {
-			rs.updateString("nom", rs.getString("nom").toUpperCase());
-			rs.updateString("toxicite", rs.getString("toxicite"));
-			rs.updateInt("nb", rs.getInt("nb"));
-			rs.updateRow();
-		}
+		pstm.setString(1, nom);
+		pstm.setString(2, toxicite);
+		pstm.setString(3, nomInitial);
+		pstm.execute();
+		
 	}
 	public void deleteMedic(String nom, String toxicite, int nb) throws SQLException {//Suppression des médicaments
 		String sql = "DELETE FROM medicaments WHERE nom = ?";

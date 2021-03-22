@@ -35,6 +35,7 @@ import javax.swing.SpinnerNumberModel;
 public class MedicamentTable extends JPanel {
 	private JTable table;
 	private JTextField champNom;
+	private String nomInitial;
 
 	/**
 	 * Create the panel.
@@ -84,6 +85,18 @@ public class MedicamentTable extends JPanel {
 		panel.add(comboBox);
 		
 		JButton modifierBtn = new JButton("Modifier");
+		modifierBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Manager manager = new Manager();
+				try {
+					manager.updateMedic(champNom.getText(), (String) comboBox.getSelectedItem(), nomInitial);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				nomInitial = champNom.getText();
+			}
+		});
 		modifierBtn.setBounds(10, 112, 89, 23);
 		panel.add(modifierBtn);
 		
@@ -141,6 +154,7 @@ public class MedicamentTable extends JPanel {
 	            	   }
 	               }
 	               champNom.setText(nom);
+	               nomInitial = nom;
 				}
 			}
 		});
@@ -170,24 +184,5 @@ public class MedicamentTable extends JPanel {
 		});
 		table.setBounds(44, 103, 430, 249);
 		table.setModel(dtm);
-		int nbR = table.getRowCount();
-		/*
-		for(int i = 0; i < nbR; i++) {
-			if(Integer.valueOf(table.getValueAt(i,2).toString())<10) {
-				TableCellRenderer t = table.getCellRenderer(i,2);
-				((JComponent) t).setBackground(Color.RED);
-			}
-			
-		}*/
-		
-		int row = 0;
-		int col = 2;
-		//table.getCellRenderer(0, 0).getTableCellRendererComponent(table, null, false, false, -1, 0).setBackground(Color.BLUE);
-		
 	}
-	/*public Component prepareRendered(TableCellRenderer rederer, int row, int column) {
-		Component comp = table.prepareRendered(rederer, row, column);
-		return null;
-		
-	}*/
 }
